@@ -2,6 +2,11 @@
 
 Set of PHP classes to generate, read and combine RSS feeds.
 
+## Installation
+
+Use [composer](http://getcomposer.org/) to install.
+Or add [packagist](packagist.org) package <code>ceus-media/rss</code> to your composer-driven project.
+
 ## Example
 
 ```

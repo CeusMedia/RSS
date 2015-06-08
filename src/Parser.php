@@ -1,10 +1,46 @@
 <?php
-class CMM_RSS_Parser{
+/**
+ *	...
+ *
+ *	Copyright (c) 2012-2015 Christian Würker / {@link http://ceusmedia.de/ Ceus Media}
+ *
+ *	This program is free software: you can redistribute it and/or modify
+ *	it under the terms of the GNU General Public License as published by
+ *	the Free Software Foundation, either version 3 of the License, or
+ *	(at your option) any later version.
+ *
+ *	This program is distributed in the hope that it will be useful,
+ *	but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *	GNU General Public License for more details.
+ *
+ *	You should have received a copy of the GNU General Public License
+ *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *	@category		Library
+ *	@package		CeusMedia_Rss
+ *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
+ *	@copyright		2012-2015 {@link http://ceusmedia.de/ Ceus Media}
+ *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
+ *	@link			https://github.com/CeusMedia/Rss
+ */
+namespace CeusMedia\Rss;
+/**
+ *	...
+ *
+ *	@category		Library
+ *	@package		CeusMedia_Rss
+ *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
+ *	@copyright		2012-2015 {@link http://ceusmedia.de/ Ceus Media}
+ *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
+ *	@link			https://github.com/CeusMedia/Rss
+ */
+class Parser{
 
 	static public function parse( $xml ){
-		$xml		= new XML_Element( $xml );
-		$channel	= new CMM_RSS_Channel();
-		
+		$xml		= new \XML_Element( $xml );
+		$channel	= new \CeusMedia\Rss\Model\Channel();
+
 		foreach( $xml->channel->children() as $node ){
 			if( $node->getName() == 'title' )
 				$channel->setTitle( $node->getValue() );
@@ -25,7 +61,7 @@ class CMM_RSS_Parser{
 				$channel->setAdmin( $user[0], $user[1] );
 			}
 			if( $node->getName() == 'pubDate' )
-				$channel->setDate( strtotime( $node->getValue() ) );			
+				$channel->setDate( strtotime( $node->getValue() ) );
 			if( $node->getName() == 'category' )
 				$channel->setCategory( $node->getValue() );
 			if( $node->getName() == 'generator' )
@@ -49,8 +85,8 @@ class CMM_RSS_Parser{
 		return $channel;
 	}
 
-	static protected function parseItem( XML_Element $xml ){
-		$item	= new CMM_RSS_Item();
+	static protected function parseItem( \XML_Element $xml ){
+		$item	= new \CeusMedia\Rss\Model\Item();
 		foreach( $xml->children() as $node ){
 			if( $node->getName() == 'title' )
 				$item->setTitle( $node->getValue() );

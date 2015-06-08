@@ -1,24 +1,52 @@
 <?php
 /**
- *	Renders object structure to RSS.
- *	@copyright	2012 iamkriss.net
- *	@author		kriss <me@iamkriss.net> 
- *	@since		2012-08-20
- *	@version	1.0
- *	@license	LGPL 3
+ *	...
+ *
+ *	Copyright (c) 2012-2015 Christian Würker / {@link http://ceusmedia.de/ Ceus Media}
+ *
+ *	This program is free software: you can redistribute it and/or modify
+ *	it under the terms of the GNU General Public License as published by
+ *	the Free Software Foundation, either version 3 of the License, or
+ *	(at your option) any later version.
+ *
+ *	This program is distributed in the hope that it will be useful,
+ *	but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *	GNU General Public License for more details.
+ *
+ *	You should have received a copy of the GNU General Public License
+ *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *	@category		Library
+ *	@package		CeusMedia_Rss
+ *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
+ *	@copyright		2012-2015 {@link http://ceusmedia.de/ Ceus Media}
+ *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
+ *	@link			https://github.com/CeusMedia/Rss
  */
-class CMM_RSS_Renderer{
+namespace CeusMedia\Rss;
+/**
+ *	...
+ *
+ *	@category		Library
+ *	@package		CeusMedia_Rss
+ *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
+ *	@copyright		2012-2015 {@link http://ceusmedia.de/ Ceus Media}
+ *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
+ *	@link			https://github.com/CeusMedia/Rss
+ */
+class Renderer{
 
 	static $version		= "2.0.11";
 
-	static public function render( CMM_RSS_Channel $channel, $useTabs = FALSE ){
+	static public function render( \CeusMedia\Rss\Model\Channel $channel, $useTabs = FALSE ){
 		$lines	= array();
 		if( !strlen( $channel->getTitle() ) )
-			throw new RuntimeException( 'Channel title cannot be empty' );
+			throw new \RuntimeException( 'Channel title cannot be empty' );
 		if( !strlen( $channel->getLink() ) )
-			throw new RuntimeException( 'Channel link cannot be empty' );
+			throw new \RuntimeException( 'Channel link cannot be empty' );
 		if( !strlen( $channel->getDescription() ) )
-			throw new RuntimeException( 'Channel description cannot be empty' );
+			throw new \RuntimeException( 'Channel description cannot be empty' );
 		$lines[]	= self::renderNode( 'title', $channel->getTitle() );
 		$lines[]	= self::renderNode( 'link', $channel->getLink() );
 		$lines[]	= self::renderNode( 'description', $channel->getDescription() );
@@ -27,7 +55,7 @@ class CMM_RSS_Renderer{
 			$lines[]	= self::renderNode( 'language', $channel->getLanguage() );
 		if( strlen( $channel->getCopyright() ) )
 			$lines[]	= self::renderNode( 'copyright', $channel->getCopyright() );
-		
+
 		if( ( $manager = $channel->getManager() ) ){
 			$manager		= $manager[0].( !empty( $manager[1] ) ? ' ('.$manager[1].')' : '' );
 			$lines[]	= self::renderNode( 'managingEditor', $manager );
@@ -38,7 +66,7 @@ class CMM_RSS_Renderer{
 		}
 		if( strlen( ( $date = $channel->getDate() ) ) ){
 			if( !preg_match( "/^[0-9]+$/", $date ) && !strtotime( $date ) )
-				throw new RuntimeException( 'Invalid item date: '.$date );
+				throw new \RuntimeException( 'Invalid item date: '.$date );
 			$date		= preg_match( "/^[0-9]+$/", $date ) ? $date : strtotime( $date );
 			$lines[]	= self::renderNode( 'pubDate', date( 'r', $date ) );
 		}
@@ -51,8 +79,8 @@ class CMM_RSS_Renderer{
 		$lines[]	= self::renderNode( 'docs', "http://www.rssboard.org/rss-specification" );
 
 		if( $channel->getCloud() )
-			$lines[]	= self::renderNode( 'cloud', NULL, $channel->getCloud() ); 
-		
+			$lines[]	= self::renderNode( 'cloud', NULL, $channel->getCloud() );
+
 		if( ( $image = $channel->getImage() ) ){
 			$url		= self::renderNode( 'url', $image[0] );
 			$title		= self::renderNode( 'title', $image[1] );
@@ -70,7 +98,7 @@ class CMM_RSS_Renderer{
 	}
 
 	static protected function formatXml( $xml, $useTabs	= FALSE ){
-		$document	= new DOMDocument();
+		$document	= new \DOMDocument();
 		$document->preserveWhiteSpace	= FALSE;
 		$document->loadXml( $xml );
 		$document->formatOutput = TRUE;
@@ -82,7 +110,7 @@ class CMM_RSS_Renderer{
 				$lines[$nr]	= preg_replace( "/^(\t*)  /", "\\1\t", $lines[$nr] );
 		return implode( "\n", $lines );
 	}
-	
+
 	static protected function renderNode( $name, $value, $attributes = array(), $encode = TRUE ){
 		$list	= array();
 		foreach( $attributes as $key => $attrValue )
@@ -92,11 +120,11 @@ class CMM_RSS_Renderer{
 			$value	= htmlspecialchars( (string) $value );
 		return '<'.$name.join( $list ).'>'.$value.'</'.$name.'>';
 	}
-	
-	static protected function renderItem( CMM_RSS_Item $item ){
+
+	static protected function renderItem( \CeusMedia\Rss\Model\Item $item ){
 		$lines	= array();
 		if( !strlen( $item->getTitle() ) )
-			throw new RuntimeException( 'Item title cannot be empty' );
+			throw new \RuntimeException( 'Item title cannot be empty' );
 		$lines[]	= self::renderNode( 'title', $item->getTitle() );
 		if( strlen( $item->getLink() ) )
 			$lines[]	= self::renderNode( 'link', $item->getLink() );
@@ -110,7 +138,7 @@ class CMM_RSS_Renderer{
 			$lines[]	= self::renderNode( 'category', $item->getCategory() );
 		if( strlen( ( $date = $item->getDate() ) ) ){
 			if( !preg_match( "/^[0-9]+$/", $date ) && !strtotime( $date ) )
-				throw new RuntimeException( 'Invalid item date: '.$date );
+				throw new \RuntimeException( 'Invalid item date: '.$date );
 			$date		= preg_match( "/^[0-9]+$/", $date ) ? $date : strtotime( $date );
 			$lines[]	= self::renderNode( 'pubDate', date( 'r', $date ) );
 		}

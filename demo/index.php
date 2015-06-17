@@ -1,6 +1,5 @@
 <?php
-
-require_once '../vendor/autoload.php';
+(@include '../vendor/autoload.php') or die('Please use composer to install required packages.');
 
 ob_start();
 try{

@@ -18,28 +18,28 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  *	@category		Library
- *	@package		CeusMedia_Rss
+ *	@package		CeusMedia_RSS
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
  *	@copyright		2012-2015 {@link http://ceusmedia.de/ Ceus Media}
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
- *	@link			https://github.com/CeusMedia/Rss
+ *	@link			https://github.com/CeusMedia/RSS
  */
-namespace CeusMedia\Rss;
+namespace CeusMedia\RSS;
 /**
  *	...
  *
  *	@category		Library
- *	@package		CeusMedia_Rss
+ *	@package		CeusMedia_RSS
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
  *	@copyright		2012-2015 {@link http://ceusmedia.de/ Ceus Media}
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
- *	@link			https://github.com/CeusMedia/Rss
+ *	@link			https://github.com/CeusMedia/RSS
  */
 class Parser{
 
 	static public function parse( $xml ){
 		$xml		= new \XML_Element( $xml );
-		$channel	= new \CeusMedia\Rss\Model\Channel();
+		$channel	= new Model\Channel();
 
 		foreach( $xml->channel->children() as $node ){
 			if( $node->getName() == 'title' )
@@ -86,7 +86,7 @@ class Parser{
 	}
 
 	static protected function parseItem( \XML_Element $xml ){
-		$item	= new \CeusMedia\Rss\Model\Item();
+		$item	= new Model\Item();
 		foreach( $xml->children() as $node ){
 			if( $node->getName() == 'title' )
 				$item->setTitle( $node->getValue() );

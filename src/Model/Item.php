@@ -18,22 +18,22 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  *	@category		Library
- *	@package		CeusMedia_Rss
+ *	@package		CeusMedia_RSS
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
  *	@copyright		2012-2015 {@link http://ceusmedia.de/ Ceus Media}
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
- *	@link			https://github.com/CeusMedia/Rss
+ *	@link			https://github.com/CeusMedia/RSS
  */
-namespace CeusMedia\Rss\Model;
+namespace CeusMedia\RSS\Model;
 /**
  *	...
  *
  *	@category		Library
- *	@package		CeusMedia_Rss
+ *	@package		CeusMedia_RSS
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
  *	@copyright		2012-2015 {@link http://ceusmedia.de/ Ceus Media}
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
- *	@link			https://github.com/CeusMedia/Rss
+ *	@link			https://github.com/CeusMedia/RSS
  */
 class Item{
 

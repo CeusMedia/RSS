@@ -18,28 +18,28 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  *	@category		Library
- *	@package		CeusMedia_Rss
+ *	@package		CeusMedia_RSS
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
  *	@copyright		2012-2015 {@link http://ceusmedia.de/ Ceus Media}
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
- *	@link			https://github.com/CeusMedia/Rss
+ *	@link			https://github.com/CeusMedia/RSS
  */
-namespace CeusMedia\Rss;
+namespace CeusMedia\RSS;
 /**
  *	...
  *
  *	@category		Library
- *	@package		CeusMedia_Rss
+ *	@package		CeusMedia_RSS
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
  *	@copyright		2012-2015 {@link http://ceusmedia.de/ Ceus Media}
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
- *	@link			https://github.com/CeusMedia/Rss
+ *	@link			https://github.com/CeusMedia/RSS
  */
 class Renderer{
 
 	static $version		= "2.0.11";
 
-	static public function render( \CeusMedia\Rss\Model\Channel $channel, $useTabs = FALSE ){
+	static public function render( \CeusMedia\RSS\Model\Channel $channel, $useTabs = FALSE ){
 		$lines	= array();
 		if( !strlen( $channel->getTitle() ) )
 			throw new \RuntimeException( 'Channel title cannot be empty' );
@@ -121,7 +121,7 @@ class Renderer{
 		return '<'.$name.join( $list ).'>'.$value.'</'.$name.'>';
 	}
 
-	static protected function renderItem( \CeusMedia\Rss\Model\Item $item ){
+	static protected function renderItem( Model\Item $item ){
 		$lines	= array();
 		if( !strlen( $item->getTitle() ) )
 			throw new \RuntimeException( 'Item title cannot be empty' );

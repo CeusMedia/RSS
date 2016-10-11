@@ -18,32 +18,32 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  *	@category		Library
- *	@package		CeusMedia_Rss
+ *	@package		CeusMedia_RSS
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
  *	@copyright		2012-2015 {@link http://ceusmedia.de/ Ceus Media}
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
- *	@link			https://github.com/CeusMedia/Rss
+ *	@link			https://github.com/CeusMedia/RSS
  */
-namespace CeusMedia\Rss;
+namespace CeusMedia\RSS;
 /**
  *	...
  *
  *	@category		Library
- *	@package		CeusMedia_Rss
+ *	@package		CeusMedia_RSS
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
  *	@copyright		2012-2015 {@link http://ceusmedia.de/ Ceus Media}
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
- *	@link			https://github.com/CeusMedia/Rss
+ *	@link			https://github.com/CeusMedia/RSS
  */
 class Combiner{
 
 	protected $channels	= array();
 
 	public function add( $rss ){
-		$this->channels[]	= \CeusMedia\Rss\Parser::parse( $rss );
+		$this->channels[]	= Parser::parse( $rss );
 	}
 
-	public function addChannel( \CeusMedia\Rss\Model\Channel $channel ){
+	public function addChannel( Model\Channel $channel ){
 		$this->channels[]	= $channel;
 	}
 
@@ -77,7 +77,7 @@ class Combiner{
 	public function render( $channel, $limit = 0 ){
 		foreach( $this->combine( $limit ) as $item )
 			$channel->addItem( $item );
-		return \CeusMedia\Rss\Renderer::render( $channel );
+		return Renderer::render( $channel );
 	}
 }
 ?>

@@ -10,18 +10,18 @@ Or add [packagist](packagist.org) package <code>ceus-media/rss</code> to your co
 ## Example
 
 ```
-use \CeusMedia\Rss as Rss;
+use \CeusMedia\RSS as RSS;
 
-$channel = new Rss\Model\Channel();
+$channel = new RSS\Model\Channel();
 $channel->setTitle("RSS Test Channel");
 $channel->setLink("http://example.com/#rss");
 $channel->setDescription("...");
 
-$item = new Rss\Model\Item();
+$item = new RSS\Model\Item();
 $item->setTitle("Item 1");
 $item->setLink("http://example.com/#item1");
 
 $channel->addItem($item);
-  
-$xml = Rss\Renderer::render($channel);
+
+$xml = RSS\Renderer::render($channel);
 ```

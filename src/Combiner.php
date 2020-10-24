@@ -2,7 +2,7 @@
 /**
  *	...
  *
- *	Copyright (c) 2012-2015 Christian Würker / {@link http://ceusmedia.de/ Ceus Media}
+ *	Copyright (c) 2012-2015 Christian Würker / {@link https://ceusmedia.de/ Ceus Media}
  *
  *	This program is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -20,38 +20,46 @@
  *	@category		Library
  *	@package		CeusMedia_RSS
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2012-2015 {@link http://ceusmedia.de/ Ceus Media}
+ *	@copyright		2012-2020 {@link https://ceusmedia.de/ Ceus Media}
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/RSS
  */
 namespace CeusMedia\RSS;
+
 /**
  *	...
  *
  *	@category		Library
  *	@package		CeusMedia_RSS
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2012-2015 {@link http://ceusmedia.de/ Ceus Media}
+ *	@copyright		2012-2020 {@link https://ceusmedia.de/ Ceus Media}
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/RSS
  */
-class Combiner{
-
+class Combiner
+{
 	protected $channels	= array();
 
-	public function add( $rss ){
+	public function add( $rss ): self
+	{
 		$this->channels[]	= Parser::parse( $rss );
+		return $this;
 	}
 
-	public function addChannel( Model\Channel $channel ){
+	public function addChannel( Model\Channel $channel ): self
+	{
 		$this->channels[]	= $channel;
+		return $this;
 	}
 
-	public function addUrl( $url ){
+	public function addUrl( $url ): self
+	{
 		$this->add( \Net_Reader::readUrl( $url ) );
+		return $this;
 	}
 
-	public function combine( $limit = 0 ){
+	public function combine( $limit = 0 ): array
+	{
 		$list	= array();
 		foreach( $this->channels as $channel ){
 			foreach( $channel->getItems() as $item ){
@@ -74,10 +82,10 @@ class Combiner{
 		return $items;
 	}
 
-	public function render( $channel, $limit = 0 ){
+	public function render( $channel, $limit = 0 ): string
+	{
 		foreach( $this->combine( $limit ) as $item )
 			$channel->addItem( $item );
 		return Renderer::render( $channel );
 	}
 }
-?>

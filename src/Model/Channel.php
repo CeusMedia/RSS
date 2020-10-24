@@ -2,7 +2,7 @@
 /**
  *	...
  *
- *	Copyright (c) 2012-2015 Christian Würker / {@link http://ceusmedia.de/ Ceus Media}
+ *	Copyright (c) 2012-2015 Christian Würker / {@link https://ceusmedia.de/ Ceus Media}
  *
  *	This program is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -20,23 +20,27 @@
  *	@category		Library
  *	@package		CeusMedia_RSS
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2012-2015 {@link http://ceusmedia.de/ Ceus Media}
+ *	@copyright		2012-2020 {@link https://ceusmedia.de/ Ceus Media}
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/RSS
  */
 namespace CeusMedia\RSS\Model;
+
+use CeusMedia\RSS\Model\Image;
+use CeusMedia\RSS\Model\Item;
+
 /**
  *	...
  *
  *	@category		Library
  *	@package		CeusMedia_RSS
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2012-2015 {@link http://ceusmedia.de/ Ceus Media}
+ *	@copyright		2012-2020 {@link https://ceusmedia.de/ Ceus Media}
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/RSS
  */
-class Channel{
-
+class Channel
+{
 	protected $admin		= array();
 	protected $category		= NULL;
 	protected $cloud		= NULL;
@@ -52,116 +56,156 @@ class Channel{
 	protected $manager		= array();
 	protected $title		= NULL;
 
-	public function addItem( \CeusMedia\RSS\Model\Item $item ){
+	public function addItem( Item $item )
+	{
 		$this->items[]	= $item;
 	}
 
-	public function getAdmin(){
+	public function getAdmin()
+	{
 		return $this->admin;
 	}
 
-	public function getCategory(){
+	public function getCategory()
+	{
 		return $this->category;
 	}
 
-	public function getCloud(){
+	public function getCloud()
+	{
 		return $this->cloud;
 	}
 
-	public function getCopyright(){
+	public function getCopyright()
+	{
 		return $this->copyright;
 	}
 
-	public function getDate(){
+	public function getDate()
+	{
 		return $this->date;
 	}
 
-	public function getDocs(){
+	public function getDocs()
+	{
 		return $this->docs;
 	}
 
-	public function getDescription(){
+	public function getDescription()
+	{
 		return $this->description;
 	}
 
-	public function getGenerator(){
+	public function getGenerator()
+	{
 		return $this->generator;
 	}
 
-	public function getImage(){
+	public function getImage()
+	{
 		return $this->image;
 	}
 
-	public function getItems(){
+	public function getItems()
+	{
 		return $this->items;
 	}
 
-	public function getLanguage(){
+	public function getLanguage()
+	{
 		return $this->language;
 	}
 
-	public function getLink(){
+	public function getLink()
+	{
 		return $this->link;
 	}
 
-	public function getManager(){
+	public function getManager()
+	{
 		return $this->manager;
 	}
 
-	public function getTitle(){
+	public function getTitle()
+	{
 		return $this->title;
 	}
 
-	public function setAdmin( $email, $name = NULL ){
+	public function setAdmin( $email, $name = NULL ): self
+	{
 		$this->admin	= array( $email, $name );
+		return $this;
 	}
 
-	public function setCategory( $category ){
+	public function setCategory( $category ): self
+	{
 		$this->category		= $category;
+		return $this;
 	}
 
-	public function setCloud( $parameters ){
+	public function setCloud( $parameters ): self
+	{
 		$this->cloud	= $parameters;
+		return $this;
 	}
 
-	public function setCopyright( $copyright ){
+	public function setCopyright( $copyright ): self
+	{
 		$this->copyright		= $copyright;
+		return $this;
 	}
 
-	public function setDate( $date ){
+	public function setDate( $date ): self
+	{
 		$this->date	= $date;
+		return $this;
 	}
 
-	public function setDocs( $url ){
+	public function setDocs( $url ): self
+	{
 		$this->docs	= $url;
+		return $this;
 	}
 
-	public function setDescription( $description ){
+	public function setDescription( $description ): self
+	{
 		$this->description	= $description;
+		return $this;
 	}
 
-	public function setGenerator( $generator ){
+	public function setGenerator( $generator ): self
+	{
 		$this->generator	= $generator;
+		return $this;
 	}
 
-	public function setImage( $url, $title, $link, $description = NULL, $width = NULL, $height = NULL ){
-		$this->image	= array( $url, $title, $link, $description, $width, $height );
+	public function setImage( Image $image ): self
+	{
+		$this->image	= $image;
+		return $this;
 	}
 
-	public function setLanguage( $language){
+	public function setLanguage( $language ): self
+	{
 		$this->language	= $language;
+		return $this;
 	}
 
-	public function setLink( $link ){
+	public function setLink( $link ): self
+	{
 		$this->link	= $link;
+		return $this;
 	}
 
-	public function setManager( $email, $name = NULL ){
+	public function setManager( $email, $name = NULL ): self
+	{
 		$this->manager	= array( $email, $name );
+		return $this;
 	}
 
-	public function setTitle( $title ){
+	public function setTitle( $title ): self
+	{
 		$this->title	= $title;
+		return $this;
 	}
 }
-?>

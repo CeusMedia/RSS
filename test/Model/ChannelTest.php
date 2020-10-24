@@ -1,13 +1,21 @@
 <?php
-class Test_Model_ChannelTest extends PHPUnit_Framework_TestCase{
+use PHPUnit\Framework\TestCase;
+use CeusMedia\RSS\Model\Channel;
 
-	public function setUp(){
-		$this->model	= new \CeusMedia\RSS\Model\Channel();
+/**
+ *	@covers	CeusMedia\RSS\Model\Channel
+ */
+class Test_Model_ChannelTest extends TestCase
+{
+	public function setUp(): void
+	{
+		$this->model	= new Channel();
 
 	}
 
-	public function testGetAdmin(){
-		$model	= new \CeusMedia\RSS\Model\Channel();
+	public function testGetAdmin()
+	{
+		$model	= new Channel();
 		$model->setAdmin( 'name', 'email' );
 
 
@@ -15,4 +23,3 @@ class Test_Model_ChannelTest extends PHPUnit_Framework_TestCase{
 
 	}
 }
-?>

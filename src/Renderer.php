@@ -2,7 +2,7 @@
 /**
  *	...
  *
- *	Copyright (c) 2012-2015 Christian Würker / {@link http://ceusmedia.de/ Ceus Media}
+ *	Copyright (c) 2012-2015 Christian Würker / {@link https://ceusmedia.de/ Ceus Media}
  *
  *	This program is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -20,26 +20,30 @@
  *	@category		Library
  *	@package		CeusMedia_RSS
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2012-2015 {@link http://ceusmedia.de/ Ceus Media}
+ *	@copyright		2012-2020 {@link https://ceusmedia.de/ Ceus Media}
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/RSS
  */
 namespace CeusMedia\RSS;
+
+use CeusMedia\RSS\Model\Channel;
+
 /**
  *	...
  *
  *	@category		Library
  *	@package		CeusMedia_RSS
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2012-2015 {@link http://ceusmedia.de/ Ceus Media}
+ *	@copyright		2012-2020 {@link https://ceusmedia.de/ Ceus Media}
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/RSS
  */
-class Renderer{
-
+class Renderer
+{
 	static $version		= "2.0.11";
 
-	static public function render( \CeusMedia\RSS\Model\Channel $channel, $useTabs = FALSE ){
+	static public function render( Channel $channel, bool $useTabs = FALSE ): string
+	{
 		$lines	= array();
 		if( !strlen( $channel->getTitle() ) )
 			throw new \RuntimeException( 'Channel title cannot be empty' );
@@ -82,12 +86,12 @@ class Renderer{
 			$lines[]	= self::renderNode( 'cloud', NULL, $channel->getCloud() );
 
 		if( ( $image = $channel->getImage() ) ){
-			$url		= self::renderNode( 'url', $image[0] );
-			$title		= self::renderNode( 'title', $image[1] );
-			$link		= self::renderNode( 'link', $image[2] );
-			$desc		= empty( $image[3] ) ? '' : self::renderNode( 'description', $image[3] );
-			$width		= empty( $image[4] ) ? '' : self::renderNode( 'width', $image[4] );
-			$height		= empty( $image[5] ) ? '' : self::renderNode( 'height', $image[5] );
+			$url		= self::renderNode( 'url', $image->getUrl() );
+			$title		= self::renderNode( 'title', $image->getTitle() );
+			$link		= self::renderNode( 'link', $image->getLink() );
+			$desc		= self::renderNode( 'description', $image->getDescription() ?: '' );
+			$width		= self::renderNode( 'width', $image->getWidth() ?: '' );
+			$height		= self::renderNode( 'height', $image->getHeight() ?: '' );
 			$content	= $url.$title.$link.$desc.$width.$height;
 			$lines[]	= self::renderNode( 'image', $content, array(), FALSE );
 		}
@@ -97,7 +101,8 @@ class Renderer{
 		return self::formatXml( $xml, $useTabs );
 	}
 
-	static protected function formatXml( $xml, $useTabs	= FALSE ){
+	static protected function formatXml( string $xml, bool $useTabs	= FALSE ): string
+	{
 		$document	= new \DOMDocument();
 		$document->preserveWhiteSpace	= FALSE;
 		$document->loadXml( $xml );
@@ -111,7 +116,8 @@ class Renderer{
 		return implode( "\n", $lines );
 	}
 
-	static protected function renderNode( $name, $value, $attributes = array(), $encode = TRUE ){
+	static protected function renderNode( string $name, $value, array $attributes = array(), bool $encode = TRUE ): string
+	{
 		$list	= array();
 		foreach( $attributes as $key => $attrValue )
 			if( $attrValue !== NULL )
@@ -121,7 +127,8 @@ class Renderer{
 		return '<'.$name.join( $list ).'>'.$value.'</'.$name.'>';
 	}
 
-	static protected function renderItem( Model\Item $item ){
+	static protected function renderItem( Model\Item $item ): string
+	{
 		$lines	= array();
 		if( !strlen( $item->getTitle() ) )
 			throw new \RuntimeException( 'Item title cannot be empty' );
@@ -151,4 +158,3 @@ class Renderer{
 		return self::renderNode( 'item', join( $lines ), array(), FALSE );
 	}
 }
-?>

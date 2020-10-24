@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<rss version="2.0.11">
+  <channel>
+    <title>Test 1</title>
+    <link>https://ceusmedia.de/</link>
+    <description>Description of channel</description>
+    <lastBuildDate>Sat, 24 Oct 2020 20:24:46 +0000</lastBuildDate>
+    <docs>http://www.rssboard.org/rss-specification</docs>
+    <image>
+      <url>https://example.org/image1</url>
+      <title>Example Image 1</title>
+      <link/>
+      <description/>
+      <width/>
+      <height/>
+    </image>
+    <item>
+      <title>Test 1-1</title>
+      <link>https://example.org/test1/test1-1</link>
+      <category>Test</category>
+    </item>
+  </channel>
+</rss>

@@ -2,7 +2,7 @@
 /**
  *	...
  *
- *	Copyright (c) 2012-2015 Christian Würker / {@link http://ceusmedia.de/ Ceus Media}
+ *	Copyright (c) 2012-2015 Christian Würker / {@link https://ceusmedia.de/ Ceus Media}
  *
  *	This program is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -20,26 +20,32 @@
  *	@category		Library
  *	@package		CeusMedia_RSS
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2012-2015 {@link http://ceusmedia.de/ Ceus Media}
+ *	@copyright		2012-2020 {@link https://ceusmedia.de/ Ceus Media}
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/RSS
  */
 namespace CeusMedia\RSS;
+
+use CeusMedia\RSS\Model\Channel;
+use CeusMedia\RSS\Model\Image;
+use CeusMedia\RSS\Model\Item;
+
 /**
  *	...
  *
  *	@category		Library
  *	@package		CeusMedia_RSS
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2012-2015 {@link http://ceusmedia.de/ Ceus Media}
+ *	@copyright		2012-2020 {@link https://ceusmedia.de/ Ceus Media}
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/RSS
  */
-class Parser{
-
-	static public function parse( $xml ){
+class Parser
+{
+	static public function parse( string $xml ): Channel
+	{
 		$xml		= new \XML_Element( $xml );
-		$channel	= new Model\Channel();
+		$channel	= new Channel();
 
 		foreach( $xml->channel->children() as $node ){
 			if( $node->getName() == 'title' )
@@ -71,13 +77,14 @@ class Parser{
 			if( $node->getName() == 'cloud' )
 				$channel->setCloud( $node->getAttributes() );
 			if( $node->getName() == 'image' ){
-				$url	= $node->url->getValue() ? $node->url->getValue() : NULL;
-				$title	= $node->title->getValue() ? $node->title->getValue() : NULL;
-				$link	= $node->link->getValue() ? $node->link->getValue() : NULL;
-				$desc	= $node->description->getValue() ? $node->description->getValue() : NULL;
-				$width	= $node->width->getValue() ? $node->width->getValue() : NULL;
-				$height	= $node->height->getValue() ? $node->height->getValue() : NULL;
-				$channel->setImage( $url, $title, $link, $desc, $width, $height );
+				$image	= new Image();
+				$image->setUrl( $node->url->getValue() );
+				$image->setTitle( $node->title->getValue() );
+				$image->setLink( $node->link->getValue() );
+				$image->setDescription( $node->description->getValue() ?: NULL );
+				$image->setWidth( (int) $node->width->getValue() ?: NULL );
+				$image->setHeight( (int) $node->height->getValue() ?: NULL );
+				$channel->setImage( $image );
 			}
 		}
 		foreach( $xml->channel->item as $item )
@@ -85,44 +92,52 @@ class Parser{
 		return $channel;
 	}
 
-	static protected function parseItem( \XML_Element $xml ){
-		$item	= new Model\Item();
+	static protected function parseItem( \XML_Element $xml ): Item
+	{
+		$item	= new Item();
 		foreach( $xml->children() as $node ){
-			if( $node->getName() == 'title' )
-				$item->setTitle( $node->getValue() );
-			if( $node->getName() == 'link' )
-				$item->setLink( $node->getValue() );
-			if( $node->getName() == 'description' )
-				$item->setContent( trim( $node->getValue() ) );
-			if( $node->getName() == 'author' ){
-				$user	= self::parseUser( $node->getValue() );
-				$item->setAuthor( $user[0], $user[1] );
-			}
-			if( $node->getName() == 'category' )
-				$item->setCategory( $node->getValue() );
-			if( $node->getName() == 'guid' ){
-				$isPermaLink	= NULL;
-				if( $node->hasAttribute( 'isPermaLink' ) && $node->getAttribute( 'isPermaLink' ) )
-					$isPermaLink	= TRUE;
-				$item->setId( $node->getValue(), $isPermaLink );
-			}
-			if( $node->getName() == 'pubDate' )
-				$item->setDate( strtotime( $node->getValue() ) );
-			if( $node->getName() == 'source' ){
-				$url	= NULL;
-				if( $node->hasAttribute( 'url' ) && $node->getAttribute( 'url' ) )
-					$url	= TRUE;
-				$item->setSource( $node->getValue(), $url );
+			switch( $node->getName() ){
+				case 'title':
+					$item->setTitle( $node->getValue() );
+					break;
+				case 'link':
+					$item->setLink( $node->getValue() );
+					break;
+				case 'description':
+					$item->setContent( trim( $node->getValue() ) );
+					break;
+				case 'author':
+					$user	= self::parseUser( $node->getValue() );
+					$item->setAuthor( $user[0], $user[1] );
+					break;
+				case 'category':
+					$item->setCategory( $node->getValue() );
+					break;
+				case 'guid':
+					$isPermaLink	= NULL;
+					if( $node->hasAttribute( 'isPermaLink' ) && $node->getAttribute( 'isPermaLink' ) )
+						$isPermaLink	= TRUE;
+					$item->setId( $node->getValue(), $isPermaLink );
+					break;
+				case 'pubDate':
+					$item->setDate( strtotime( $node->getValue() ) );
+					break;
+				case 'source':
+					$url	= NULL;
+					if( $node->hasAttribute( 'url' ) && $node->getAttribute( 'url' ) )
+						$url	= TRUE;
+					$item->setSource( $node->getValue(), $url );
+					break;
 			}
 		}
 		return $item;
 	}
 
-	static protected function parseUser( $xml ){
+	static protected function parseUser( \XML_Element $xml ): array
+	{
 		$parts	= explode( " (", $xml->getValue() );
 		$name	= array_shift( $parts );
 		$email	= count( $parts ) ? substr( join( $parts ), 0, -1 ) : NULL;
 		return array( $name, $email );
 	}
 }
-?>

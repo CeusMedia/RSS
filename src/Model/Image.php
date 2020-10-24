@@ -35,103 +35,78 @@ namespace CeusMedia\RSS\Model;
  *	@copyright		2012-2020 {@link https://ceusmedia.de/ Ceus Media}
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/RSS
- */
-class Item
+ */class Image
 {
-	protected $author		= array();
-	protected $category		= NULL;
-	protected $content		= NULL;
-	protected $date			= NULL;
-	protected $link			= NULL;
-	protected $guid			= array();
-	protected $source		= array();
-	protected $title		= NULL;
+	protected $url;
+	protected $title;
+	protected $link;
+	protected $description;
+	protected $width;
+	protected $height;
 
-	public function getAuthor()
+	public function getUrl(): ?string
 	{
-		return $this->author;
+		return $this->url;
 	}
 
-	public function getCategory()
-	{
-		return $this->category;
-	}
-
-	public function getContent()
-	{
-		return $this->content;
-	}
-
-	public function getDate()
-	{
-		return $this->date;
-	}
-
-	public function getId()
-	{
-		return $this->guid;
-	}
-
-	public function getLink()
-	{
-		return $this->link;
-	}
-
-	public function getSource()
-	{
-		return $this->source;
-	}
-
-	public function getTitle()
+	public function getTitle(): ?string
 	{
 		return $this->title;
 	}
 
-	public function setAuthor( $email, $name = NULL ): self
+	public function getLink(): ?string
 	{
-		$this->author	= array( $email, $name );
+		return $this->link;
+	}
+
+	public function getDescription(): ?string
+	{
+		return $this->description;
+	}
+
+	public function getWidth(): ?int
+	{
+		return $this->width;
+	}
+
+	public function getHeight(): ?int
+	{
+		return $this->height;
+	}
+
+	public function setUrl( string $url ): self
+	{
+		$this->url	= $url;
 		return $this;
 	}
 
-	public function setCategory( $category ): self
-	{
-		$this->category	= $category;
-		return $this;
-	}
-
-	public function setContent( $content ): self
-	{
-		$this->content	= $content;
-		return $this;
-	}
-
-	public function setDate( $date ): self
-	{
-		$this->date		= $date;
-		return $this;
-	}
-
-	public function setId( $uri, $isPermaLink = FALSE ): self
-	{
-		$this->guid	= array( $uri, $isPermaLink );
-		return $this;
-	}
-
-	public function setLink( $link ): self
-	{
-		$this->link		= $link;
-		return $this;
-	}
-
-	public function setSource( $uri, $label ): self
-	{
-		$this->source	= array( $uri, $label );
-		return $this;
-	}
-
-	public function setTitle( $title ): self
+	public function setTitle( ?string $title ): self
 	{
 		$this->title	= $title;
+		return $this;
+	}
+
+	public function setLink( ?string $link ): self
+	{
+		$this->link	= $link;
+		return $this;
+	}
+
+	public function setDescription( ?string $description ): self
+	{
+		$this->description	= $description;
+		return $this;
+	}
+
+	public function setWidth( ?int $width ): self
+	{
+		$this->width	= $width;
+		return $this;
+	}
+
+	public function setHeight( ?int $height ): self
+	{
+		$this->$height	= $height;
 		return $this;
 	}
 }

@@ -35,34 +35,18 @@
     }
   },
   "scripts": {
-    "dev:index-json": [
-      "@dev:install",
-      "XDEBUG_MODE=off php vendor/ceus-media/hydrogen-source-indexer/index.php json"
-    ],
-    "dev:index-json-humanreadable": [
-      "@dev:install",
-      "XDEBUG_MODE=off php vendor/ceus-media/hydrogen-source-indexer/index.php json-dev"
-    ],
-    "dev:index-html": [
-      "@dev:install",
-      "XDEBUG_MODE=off php vendor/ceus-media/hydrogen-source-indexer/index.php html"
-    ],
-    "dev:index-serial": [
-      "@dev:install",
-      "XDEBUG_MODE=off php vendor/ceus-media/hydrogen-source-indexer/index.php serial"
-    ],
     "dev:install": "composer install --dev --quiet",
     "dev:rector": [
       "@dev:install",
-      "vendor/bin/rector process --config=rector.php --dry-run"
+      "vendor/bin/rector process --config=tool/rector.php --dry-run"
     ],
     "dev:rector-fix": [
       "@dev:install",
-      "vendor/bin/rector process --config=tool/config/rector.php"
+      "vendor/bin/rector process --config=tool/rector.php"
     ],
     "dev:stan": [
       "@dev:install",
-      "XDEBUG_MODE=off vendor/bin/phpstan analyze --configuration=phpstan.neon --memory-limit=1G --verbose"
+      "XDEBUG_MODE=off vendor/bin/phpstan analyze --configuration=tool/phpstan.neon --memory-limit=1G --verbose"
     ],
     "dev:stan-clear": [
       "@dev:install",
@@ -70,7 +54,7 @@
     ],
     "dev:stan-save": [
       "@dev:install",
-      "XDEBUG_MODE=off vendor/bin/phpstan analyse --configuration phpstan.neon --generate-baseline phpstan-baseline.neon --verbose"
+      "XDEBUG_MODE=off vendor/bin/phpstan analyse --configuration tool/phpstan.neon --generate-baseline tool/phpstan-baseline.neon --verbose"
     ],
     "dev:test-syntax": [
       "@dev:install",
@@ -78,20 +62,16 @@
     ],
     "dev:test-units": [
       "@dev:install",
-      "php vendor/bin/phpunit --configuration phpunit9.xml --testsuite units"
+      "php vendor/bin/phpunit --configuration tool/phpunit9.xml --testsuite units"
     ],
     "dev:update": "composer update --dev",
     "incomplete:dev:create-docs": [
       "@dev:install",
-      "php vendor/ceus-media/doc-creator/doc-creator.php --config-file=tool/config/doc-creator.xml"
+      "php vendor/ceus-media/doc-creator/doc-creator.php --config-file=tool/doc.xml"
     ]
   },
   "scripts-descriptions": {
-    "dev:index-json": "Create library index as compact JSON (to speed up Hymn)",
     "dev:install": "Installs project dependencies for Development stage quietly",
-    "dev:index-json-humanreadable": "Create library index as readable JSON",
-    "dev:index-html": "Create library index as HTML",
-    "dev:index-serial": "Create library index as PHP serial",
     "dev:rector": "Shows suggestions of configured Rector rules",
     "dev:rector-fix": "Apply currently configured Rector rules to codebase",
     "dev:stan": "Validate codebase with PHPStan",

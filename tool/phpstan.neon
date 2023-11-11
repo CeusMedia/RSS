@@ -1,0 +1,22 @@
+includes:
+#	- ../vendor/phpstan/phpstan-strict-rules/rules.neon
+#	- phpstan-baseline.neon
+
+parameters:
+	phpVersion: 70400
+	level: 5
+#	level: max
+	paths:
+		- ../src
+	fileExtensions:
+		- php
+	excludePaths:
+		analyseAndScan:
+			- ../vendor/ceus-media/common/src/compat8.php
+			- ../vendor/ceus-media/common/src/compat9.php
+			- ../vendor/ceus-media/common/src/Exception/Abstraction.php
+			- ../vendor/ceus-media/common/src/Exception/Interface_.php
+	scanDirectories:
+		- ../vendor/ceus-media/common
+	checkMissingIterableValueType: false
+	treatPhpDocTypesAsCertain: false

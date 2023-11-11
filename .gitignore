@@ -2,4 +2,5 @@
 /composer.lock
 /doc/API
 /doc/Test
-/.phpunit.result.cache
+/tool/.phpunit.result.cache
+/.idea

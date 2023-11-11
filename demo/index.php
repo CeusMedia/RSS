@@ -16,7 +16,7 @@ try{
 
 	$item1	= new Item();
 	$item1->setTitle( "Item 1-1" );
-	$item1->setDate( "2015-01-01" );
+	$item1->setDate( strtotime( "2015-01-01" ) );
 	$item1->setLink( "http://example.com/#channel1_item1");
 
 	$channel1->addItem( $item1 );

@@ -1,4 +1,6 @@
 <?php
+namespace CeusMedia\RSSTest;
+
 use PHPUnit\Framework\TestCase;
 use CeusMedia\RSS\Renderer;
 use CeusMedia\RSS\Model\Channel;
@@ -8,7 +10,7 @@ use CeusMedia\RSS\Model\Image;
 /**
  *	@covers	CeusMedia\RSS\Renderer
  */
-class Test_RendererTest extends TestCase
+class RendererTest extends TestCase
 {
 	public function setUp(): void
 	{

@@ -1,4 +1,5 @@
-vendor
-composer.lock
-doc/API
-doc/Test
+/vendor
+/composer.lock
+/doc/API
+/doc/Test
+/.phpunit.result.cache

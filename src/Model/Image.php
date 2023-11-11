@@ -20,7 +20,7 @@
  *	@category		Library
  *	@package		CeusMedia_RSS
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2012-2020 {@link https://ceusmedia.de/ Ceus Media}
+ *	@copyright		2012-2023 {@link https://ceusmedia.de/ Ceus Media}
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/RSS
  */
@@ -32,17 +32,17 @@ namespace CeusMedia\RSS\Model;
  *	@category		Library
  *	@package		CeusMedia_RSS
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2012-2020 {@link https://ceusmedia.de/ Ceus Media}
+ *	@copyright		2012-2023 {@link https://ceusmedia.de/ Ceus Media}
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/RSS
  */class Image
 {
-	protected $url;
-	protected $title;
-	protected $link;
-	protected $description;
-	protected $width;
-	protected $height;
+	protected ?string $url			= NULL;
+	protected ?string $title		= NULL;
+	protected ?string $link			= NULL;
+	protected ?string $description	= NULL;
+	protected ?int $width			= NULL;
+	protected ?int $height			= NULL;
 
 	public function getUrl(): ?string
 	{
@@ -106,7 +106,7 @@ namespace CeusMedia\RSS\Model;
 
 	public function setHeight( ?int $height ): self
 	{
-		$this->$height	= $height;
+		$this->height	= $height;
 		return $this;
 	}
 }

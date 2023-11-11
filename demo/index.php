@@ -1,14 +1,20 @@
 <?php
+
+use CeusMedia\Common\UI\HTML\Exception\Page as ExceptionPage;
+use CeusMedia\RSS\Combiner;
+use CeusMedia\RSS\Model\Channel;
+use CeusMedia\RSS\Model\Item;
+
 (@include '../vendor/autoload.php') or die('Please use composer to install required packages.');
 
 ob_start();
 try{
-	$channel1	= new \CeusMedia\RSS\Model\Channel();
+	$channel1	= new Channel();
 	$channel1->setTitle( "RSS Test Channel 1");
 	$channel1->setLink( "http://example.com/#channel1");
 	$channel1->setDescription( "...");
 
-	$item1	= new \CeusMedia\RSS\Model\Item();
+	$item1	= new Item();
 	$item1->setTitle( "Item 1-1" );
 	$item1->setDate( "2015-01-01" );
 	$item1->setLink( "http://example.com/#channel1_item1");
@@ -32,23 +38,23 @@ try{
 	}
 
 
-	$channel2	= new \CeusMedia\RSS\Model\Channel();
+	$channel2	= new Channel();
 	$channel2->setTitle( "RSS Test Channel 2");
 	$channel2->setLink( "http://example.com/#channel2");
 	$channel2->setDescription( "...");
 
-	$item1	= new \CeusMedia\RSS\Model\Item();
+	$item1	= new Item();
 	$item1->setTitle( "Item 2-1" );
 	$item1->setDate( "2015-01-02" );
 	$item1->setLink( "http://example.com/#channel2_item1");
 
 	$channel2->addItem( $item1 );
 
-	$combiner	= new \CeusMedia\RSS\Combiner();
+	$combiner	= new Combiner();
 	$combiner->addChannel( $channel1 );
 	$combiner->addChannel( $channel2 );
 
-	$channel3	= new \CeusMedia\RSS\Model\Channel();
+	$channel3	= new Channel();
 	$channel3->setTitle( "RSS Test Channel 3");
 	$channel3->setLink( "http://example.com/#channel3");
 	$channel3->setDescription( "...");
@@ -57,7 +63,7 @@ try{
 	print '<xmp>'.$rss3xml.'</xmp>';
 }
 catch( Exception $e ){
-	UI_HTML_Exception_Page::display( $e );
+	ExceptionPage::display( $e );
 }
 
 

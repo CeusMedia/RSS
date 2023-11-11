@@ -20,7 +20,7 @@
  *	@category		Library
  *	@package		CeusMedia_RSS
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2012-2020 {@link https://ceusmedia.de/ Ceus Media}
+ *	@copyright		2012-2023 {@link https://ceusmedia.de/ Ceus Media}
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/RSS
  */
@@ -32,104 +32,104 @@ namespace CeusMedia\RSS\Model;
  *	@category		Library
  *	@package		CeusMedia_RSS
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2012-2020 {@link https://ceusmedia.de/ Ceus Media}
+ *	@copyright		2012-2023 {@link https://ceusmedia.de/ Ceus Media}
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/RSS
  */
 class Item
 {
-	protected $author		= array();
-	protected $category		= NULL;
-	protected $content		= NULL;
-	protected $date			= NULL;
-	protected $link			= NULL;
-	protected $guid			= array();
-	protected $source		= array();
-	protected $title		= NULL;
+	protected array $author			= [];
+	protected ?string $category		= NULL;
+	protected ?string $content		= NULL;
+	protected ?int $date			= NULL;
+	protected ?string $link			= NULL;
+	protected array $guid			= [];
+	protected array $source			= [];
+	protected ?string $title		= NULL;
 
-	public function getAuthor()
+	public function getAuthor(): array
 	{
 		return $this->author;
 	}
 
-	public function getCategory()
+	public function getCategory(): ?string
 	{
 		return $this->category;
 	}
 
-	public function getContent()
+	public function getContent(): ?string
 	{
 		return $this->content;
 	}
 
-	public function getDate()
+	public function getDate(): ?int
 	{
 		return $this->date;
 	}
 
-	public function getId()
+	public function getId(): array
 	{
 		return $this->guid;
 	}
 
-	public function getLink()
+	public function getLink(): ?string
 	{
 		return $this->link;
 	}
 
-	public function getSource()
+	public function getSource(): array
 	{
 		return $this->source;
 	}
 
-	public function getTitle()
+	public function getTitle(): ?string
 	{
 		return $this->title;
 	}
 
-	public function setAuthor( $email, $name = NULL ): self
+	public function setAuthor( string $email, ?string $name = NULL ): self
 	{
 		$this->author	= array( $email, $name );
 		return $this;
 	}
 
-	public function setCategory( $category ): self
+	public function setCategory( string $category ): self
 	{
 		$this->category	= $category;
 		return $this;
 	}
 
-	public function setContent( $content ): self
+	public function setContent( string $content ): self
 	{
 		$this->content	= $content;
 		return $this;
 	}
 
-	public function setDate( $date ): self
+	public function setDate( ?int $date ): self
 	{
 		$this->date		= $date;
 		return $this;
 	}
 
-	public function setId( $uri, $isPermaLink = FALSE ): self
+	public function setId( string $uri, bool $isPermaLink = FALSE ): self
 	{
-		$this->guid	= array( $uri, $isPermaLink );
+		$this->guid	= [$uri, $isPermaLink];
 		return $this;
 	}
 
-	public function setLink( $link ): self
+	public function setLink( string $link ): self
 	{
 		$this->link		= $link;
 		return $this;
 	}
 
-	public function setSource( $uri, $label ): self
+	public function setSource( string $label, ?string $uri ): self
 	{
-		$this->source	= array( $uri, $label );
+		$this->source	= [$label, $uri];
 		return $this;
 	}
 
-	public function setTitle( $title ): self
+	public function setTitle( string $title ): self
 	{
 		$this->title	= $title;
 		return $this;

@@ -20,14 +20,11 @@
  *	@category		Library
  *	@package		CeusMedia_RSS
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2012-2020 {@link https://ceusmedia.de/ Ceus Media}
+ *	@copyright		2012-2023 {@link https://ceusmedia.de/ Ceus Media}
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/RSS
  */
 namespace CeusMedia\RSS\Model;
-
-use CeusMedia\RSS\Model\Image;
-use CeusMedia\RSS\Model\Item;
 
 /**
  *	...
@@ -35,145 +32,146 @@ use CeusMedia\RSS\Model\Item;
  *	@category		Library
  *	@package		CeusMedia_RSS
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2012-2020 {@link https://ceusmedia.de/ Ceus Media}
+ *	@copyright		2012-2023 {@link https://ceusmedia.de/ Ceus Media}
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/RSS
  */
 class Channel
 {
-	protected $admin		= array();
-	protected $category		= NULL;
-	protected $cloud		= NULL;
-	protected $copyright	= NULL;
-	protected $date			= NULL;
-	protected $description	= NULL;
-	protected $docs			= "http://www.rssboard.org/rss-specification";
-	protected $generator	= NULL;
-	protected $image		= array();
-	protected $items		= array();
-	protected $language		= NULL;
-	protected $link			= NULL;
-	protected $manager		= array();
-	protected $title		= NULL;
+	protected array $admin			= [];
+	protected ?string $category		= NULL;
+	protected array $cloud			= [];
+	protected ?string $copyright	= NULL;
+	protected ?int $date			= NULL;
+	protected ?string $description	= NULL;
+	protected string $docs			= "https://www.rssboard.org/rss-specification";
+	protected ?string $generator	= NULL;
+	protected ?Image $image			= NULL;
+	protected array $items			= [];
+	protected ?string $language		= NULL;
+	protected ?string $link			= NULL;
+	protected array $manager		= [];
+	protected ?string $title		= NULL;
 
-	public function addItem( Item $item )
+	public function addItem( Item $item ): self
 	{
 		$this->items[]	= $item;
+		return $this;
 	}
 
-	public function getAdmin()
+	public function getAdmin(): array
 	{
 		return $this->admin;
 	}
 
-	public function getCategory()
+	public function getCategory(): ?string
 	{
 		return $this->category;
 	}
 
-	public function getCloud()
+	public function getCloud(): array
 	{
 		return $this->cloud;
 	}
 
-	public function getCopyright()
+	public function getCopyright(): ?string
 	{
 		return $this->copyright;
 	}
 
-	public function getDate()
+	public function getDate(): ?int
 	{
 		return $this->date;
 	}
 
-	public function getDocs()
+	public function getDocs(): string
 	{
 		return $this->docs;
 	}
 
-	public function getDescription()
+	public function getDescription(): ?string
 	{
 		return $this->description;
 	}
 
-	public function getGenerator()
+	public function getGenerator(): ?string
 	{
 		return $this->generator;
 	}
 
-	public function getImage()
+	public function getImage(): ?Image
 	{
 		return $this->image;
 	}
 
-	public function getItems()
+	public function getItems(): array
 	{
 		return $this->items;
 	}
 
-	public function getLanguage()
+	public function getLanguage(): ?string
 	{
 		return $this->language;
 	}
 
-	public function getLink()
+	public function getLink(): ?string
 	{
 		return $this->link;
 	}
 
-	public function getManager()
+	public function getManager(): array
 	{
 		return $this->manager;
 	}
 
-	public function getTitle()
+	public function getTitle(): ?string
 	{
 		return $this->title;
 	}
 
-	public function setAdmin( $email, $name = NULL ): self
+	public function setAdmin( string $email, ?string $name = NULL ): self
 	{
 		$this->admin	= array( $email, $name );
 		return $this;
 	}
 
-	public function setCategory( $category ): self
+	public function setCategory( string $category ): self
 	{
 		$this->category		= $category;
 		return $this;
 	}
 
-	public function setCloud( $parameters ): self
+	public function setCloud( array $parameters ): self
 	{
 		$this->cloud	= $parameters;
 		return $this;
 	}
 
-	public function setCopyright( $copyright ): self
+	public function setCopyright( string $copyright ): self
 	{
 		$this->copyright		= $copyright;
 		return $this;
 	}
 
-	public function setDate( $date ): self
+	public function setDate( ?int $date ): self
 	{
 		$this->date	= $date;
 		return $this;
 	}
 
-	public function setDocs( $url ): self
+	public function setDocs( string $url ): self
 	{
 		$this->docs	= $url;
 		return $this;
 	}
 
-	public function setDescription( $description ): self
+	public function setDescription( string $description ): self
 	{
 		$this->description	= $description;
 		return $this;
 	}
 
-	public function setGenerator( $generator ): self
+	public function setGenerator( string $generator ): self
 	{
 		$this->generator	= $generator;
 		return $this;
@@ -185,25 +183,25 @@ class Channel
 		return $this;
 	}
 
-	public function setLanguage( $language ): self
+	public function setLanguage( ?string $language ): self
 	{
 		$this->language	= $language;
 		return $this;
 	}
 
-	public function setLink( $link ): self
+	public function setLink( ?string $link ): self
 	{
 		$this->link	= $link;
 		return $this;
 	}
 
-	public function setManager( $email, $name = NULL ): self
+	public function setManager( string $email, ?string $name = NULL ): self
 	{
 		$this->manager	= array( $email, $name );
 		return $this;
 	}
 
-	public function setTitle( $title ): self
+	public function setTitle( ?string $title ): self
 	{
 		$this->title	= $title;
 		return $this;

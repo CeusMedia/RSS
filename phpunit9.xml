@@ -11,7 +11,7 @@
     </report>
   </coverage>
   <testsuites>
-    <testsuite name="CeusMedia/RSS">
+    <testsuite name="units">
       <directory>test</directory>
     </testsuite>
   </testsuites>

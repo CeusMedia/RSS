@@ -78,7 +78,7 @@
     ],
     "dev:test-units": [
       "@dev:install",
-      "php vendor/bin/phpunit --configuration tool/config/phpunit9.xml --testsuite units"
+      "php vendor/bin/phpunit --configuration phpunit9.xml --testsuite units"
     ],
     "dev:update": "composer update --dev",
     "incomplete:dev:create-docs": [

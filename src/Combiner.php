@@ -20,11 +20,15 @@
  *	@category		Library
  *	@package		CeusMedia_RSS
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2012-2020 {@link https://ceusmedia.de/ Ceus Media}
+ *	@copyright		2012-2023 {@link https://ceusmedia.de/ Ceus Media}
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/RSS
  */
 namespace CeusMedia\RSS;
+
+use CeusMedia\Common\Exception\IO as IoException;
+use CeusMedia\Common\Net\Reader as NetReader;
+use CeusMedia\RSS\Model\Channel;
 
 /**
  *	...
@@ -32,17 +36,17 @@ namespace CeusMedia\RSS;
  *	@category		Library
  *	@package		CeusMedia_RSS
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2012-2020 {@link https://ceusmedia.de/ Ceus Media}
+ *	@copyright		2012-2023 {@link https://ceusmedia.de/ Ceus Media}
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/RSS
  */
 class Combiner
 {
-	protected $channels	= array();
+	protected array $channels	= [];
 
-	public function add( $rss ): self
+	public function add( string $rssXml ): self
 	{
-		$this->channels[]	= Parser::parse( $rss );
+		$this->channels[]	= Parser::parse( $rssXml );
 		return $this;
 	}
 
@@ -52,13 +56,18 @@ class Combiner
 		return $this;
 	}
 
-	public function addUrl( $url ): self
+	/**
+	 *	@param		string		$url
+	 *	@return		self
+	 *	@throws		IoException
+	 */
+	public function addUrl( string $url ): self
 	{
-		$this->add( \Net_Reader::readUrl( $url ) );
+		$this->add( NetReader::readUrl( $url ) );
 		return $this;
 	}
 
-	public function combine( $limit = 0 ): array
+	public function combine( int $limit = 0 ): array
 	{
 		$list	= array();
 		foreach( $this->channels as $channel ){
@@ -82,7 +91,7 @@ class Combiner
 		return $items;
 	}
 
-	public function render( $channel, $limit = 0 ): string
+	public function render( Channel $channel, int $limit = 0 ): string
 	{
 		foreach( $this->combine( $limit ) as $item )
 			$channel->addItem( $item );

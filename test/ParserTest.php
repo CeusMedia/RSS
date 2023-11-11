@@ -1,13 +1,15 @@
 <?php
+namespace CeusMedia\RSSTest;
+
 use PHPUnit\Framework\TestCase;
 use CeusMedia\RSS\Parser;
 use CeusMedia\RSS\Model\Channel;
 use CeusMedia\RSS\Model\Item;
 
 /**
- *	@covers	CeusMedia\RSS\Parser
+ *	@covers	\CeusMedia\RSS\Parser
  */
-class Test_ChannelTest extends TestCase
+class ParserTest extends TestCase
 {
 	public function setUp(): void
 	{

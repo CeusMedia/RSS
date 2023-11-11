@@ -20,13 +20,16 @@
  *	@category		Library
  *	@package		CeusMedia_RSS
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2012-2020 {@link https://ceusmedia.de/ Ceus Media}
+ *	@copyright		2012-2023 {@link https://ceusmedia.de/ Ceus Media}
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/RSS
  */
 namespace CeusMedia\RSS;
 
 use CeusMedia\RSS\Model\Channel;
+use DateTime;
+use DOMDocument;
+use RuntimeException;
 
 /**
  *	...
@@ -34,30 +37,30 @@ use CeusMedia\RSS\Model\Channel;
  *	@category		Library
  *	@package		CeusMedia_RSS
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2012-2020 {@link https://ceusmedia.de/ Ceus Media}
+ *	@copyright		2012-2023 {@link https://ceusmedia.de/ Ceus Media}
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/RSS
  */
 class Renderer
 {
-	static $version		= "2.0.11";
+	public static string $version		= "2.0.11";
 
-	static public function render( Channel $channel, bool $useTabs = FALSE ): string
+	public static function render( Channel $channel, bool $useTabs = FALSE ): string
 	{
 		$lines	= array();
-		if( !strlen( $channel->getTitle() ) )
-			throw new \RuntimeException( 'Channel title cannot be empty' );
-		if( !strlen( $channel->getLink() ) )
-			throw new \RuntimeException( 'Channel link cannot be empty' );
-		if( !strlen( $channel->getDescription() ) )
-			throw new \RuntimeException( 'Channel description cannot be empty' );
+		if( NULL !== $channel->getTitle() && !strlen( trim( $channel->getTitle() ) ) )
+			throw new RuntimeException( 'Channel title cannot be empty' );
+		if( NULL !== $channel->getLink() && !strlen( trim( $channel->getLink() ) ) )
+			throw new RuntimeException( 'Channel link cannot be empty' );
+		if( NULL !== $channel->getDescription() && !strlen( trim( $channel->getDescription() ) ) )
+			throw new RuntimeException( 'Channel description cannot be empty' );
 		$lines[]	= self::renderNode( 'title', $channel->getTitle() );
 		$lines[]	= self::renderNode( 'link', $channel->getLink() );
 		$lines[]	= self::renderNode( 'description', $channel->getDescription() );
 
-		if( strlen( $channel->getLanguage() ) )
+		if( NULL !== $channel->getLanguage() && strlen( $channel->getLanguage() ) )
 			$lines[]	= self::renderNode( 'language', $channel->getLanguage() );
-		if( strlen( $channel->getCopyright() ) )
+		if( NULL !== $channel->getCopyright() && strlen( $channel->getCopyright() ) )
 			$lines[]	= self::renderNode( 'copyright', $channel->getCopyright() );
 
 		if( ( $manager = $channel->getManager() ) ){
@@ -68,19 +71,21 @@ class Renderer
 			$admin		= $admin[0].( !empty( $admin[1] ) ? ' ('.$admin[1].')' : '' );
 			$lines[]	= self::renderNode( 'webMaster', $admin );
 		}
-		if( strlen( ( $date = $channel->getDate() ) ) ){
-			if( !preg_match( "/^[0-9]+$/", $date ) && !strtotime( $date ) )
-				throw new \RuntimeException( 'Invalid item date: '.$date );
-			$date		= preg_match( "/^[0-9]+$/", $date ) ? $date : strtotime( $date );
-			$lines[]	= self::renderNode( 'pubDate', date( 'r', $date ) );
+		if( NULL !== ( $date = $channel->getDate() ) ){
+			if( is_int( $date ) )
+				$lines[]	= self::renderNode( 'pubDate', date( 'r', $date ) );
+//			else if( $date instanceof DateTime )
+//				$lines[]	= self::renderNode( 'pubDate', $date->format( 'r' ) );
+			else
+				$lines[]	= self::renderNode( 'pubDate', $date );
 		}
 		$lines[]	= self::renderNode( 'lastBuildDate', date( 'r', time() ) );
 
-		if( strlen( $channel->getCategory() ) )
+		if( NULL !== $channel->getCategory() && strlen( $channel->getCategory() ) )
 			$lines[]	= self::renderNode( 'category', $channel->getCategory() );
-		if( strlen( $channel->getGenerator() ) )
+		if( NULL !== $channel->getGenerator() && strlen( $channel->getGenerator() ) )
 			$lines[]	= self::renderNode( 'generator', $channel->getGenerator() );
-		$lines[]	= self::renderNode( 'docs', "http://www.rssboard.org/rss-specification" );
+		$lines[]	= self::renderNode( 'docs', "https://www.rssboard.org/rss-specification" );
 
 		if( $channel->getCloud() )
 			$lines[]	= self::renderNode( 'cloud', NULL, $channel->getCloud() );
@@ -101,24 +106,25 @@ class Renderer
 		return self::formatXml( $xml, $useTabs );
 	}
 
-	static protected function formatXml( string $xml, bool $useTabs	= FALSE ): string
+	protected static function formatXml( string $xml, bool $useTabs	= FALSE ): string
 	{
-		$document	= new \DOMDocument();
+		$document	= new DOMDocument();
 		$document->preserveWhiteSpace	= FALSE;
 		$document->loadXml( $xml );
 		$document->formatOutput = TRUE;
+		$xml	= $document->saveXml();
 		if( !$useTabs )
-			return $document->saveXml();
-		$lines	= explode( "\n", $document->saveXml() );
+			return $xml;
+		$lines	= explode( "\n", $xml );
 		foreach( $lines as $nr => $line )
 			while( preg_match( "/^\t*  /", $lines[$nr] ) )
 				$lines[$nr]	= preg_replace( "/^(\t*)  /", "\\1\t", $lines[$nr] );
 		return implode( "\n", $lines );
 	}
 
-	static protected function renderNode( string $name, $value, array $attributes = array(), bool $encode = TRUE ): string
+	protected static function renderNode( string $name, $value, array $attributes = [], bool $encode = TRUE ): string
 	{
-		$list	= array();
+		$list	= [];
 		foreach( $attributes as $key => $attrValue )
 			if( $attrValue !== NULL )
 				$list[]	= ' '.$key.'="'.$attrValue.'"';
@@ -127,34 +133,36 @@ class Renderer
 		return '<'.$name.join( $list ).'>'.$value.'</'.$name.'>';
 	}
 
-	static protected function renderItem( Model\Item $item ): string
+	protected static function renderItem( Model\Item $item ): string
 	{
 		$lines	= array();
-		if( !strlen( $item->getTitle() ) )
-			throw new \RuntimeException( 'Item title cannot be empty' );
+		if( NULL === $item->getTitle() || !strlen( $item->getTitle() ) )
+			throw new RuntimeException( 'Item title cannot be empty' );
 		$lines[]	= self::renderNode( 'title', $item->getTitle() );
-		if( strlen( $item->getLink() ) )
+		if( NULL !== $item->getLink() && strlen( $item->getLink() ) )
 			$lines[]	= self::renderNode( 'link', $item->getLink() );
-		if( strlen( $item->getContent() ) )
+		if( NULL !== $item->getContent() && strlen( $item->getContent() ) )
 			$lines[]	= self::renderNode( 'description', $item->getContent() );
 		if( ( $author = $item->getAuthor() ) ){
 			$author		= $author[0].( !empty( $author[1] ) ? ' ('.$author[1].')' : '' );
 			$lines[]	= self::renderNode( 'author', $author );
 		}
-		if( strlen( $item->getCategory() ) )
+		if( NULL !== $item->getCategory() && strlen( $item->getCategory() ) )
 			$lines[]	= self::renderNode( 'category', $item->getCategory() );
-		if( strlen( ( $date = $item->getDate() ) ) ){
-			if( !preg_match( "/^[0-9]+$/", $date ) && !strtotime( $date ) )
-				throw new \RuntimeException( 'Invalid item date: '.$date );
-			$date		= preg_match( "/^[0-9]+$/", $date ) ? $date : strtotime( $date );
-			$lines[]	= self::renderNode( 'pubDate', date( 'r', $date ) );
+		if( NULL !== ( $date = $item->getDate() ) ){
+			if( is_int( $date ) )
+				$lines[]	= self::renderNode( 'pubDate', date( 'r', $date ) );
+//			else if( $date instanceof DateTime )
+//				$lines[]	= self::renderNode( 'pubDate', $date->format( 'r' ) );
+			else
+				$lines[]	= self::renderNode( 'pubDate', $date );
 		}
 		if( ( $guid = $item->getId() ) ){
 			$attributes	= array( 'isPermaLink' => $guid[1] ? 'true' : NULL );
 			$lines[]	= self::renderNode( 'guid', $guid[0], $attributes );
 		}
 		if( ( $source = $item->getSource() ) )
-			$lines[]	= self::renderNode( 'source', $source[1], array( 'url' => $source[0] ) );
-		return self::renderNode( 'item', join( $lines ), array(), FALSE );
+			$lines[]	= self::renderNode( 'source', $source[0], ['url' => $source[1]] );
+		return self::renderNode( 'item', join( $lines ), [], FALSE );
 	}
 }

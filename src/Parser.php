@@ -1,8 +1,9 @@
-<?php
+<?php /** @noinspection PhpMultipleClassDeclarationsInspection */
+
 /**
  *	...
  *
- *	Copyright (c) 2012-2015 Christian Würker / {@link https://ceusmedia.de/ Ceus Media}
+ *	Copyright (c) 2012-2023 Christian Würker / {@link https://ceusmedia.de/ Ceus Media}
  *
  *	This program is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -20,12 +21,13 @@
  *	@category		Library
  *	@package		CeusMedia_RSS
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2012-2020 {@link https://ceusmedia.de/ Ceus Media}
+ *	@copyright		2012-2023 {@link https://ceusmedia.de/ Ceus Media}
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/RSS
  */
 namespace CeusMedia\RSS;
 
+use CeusMedia\Common\XML\Element as XmlElement;
 use CeusMedia\RSS\Model\Channel;
 use CeusMedia\RSS\Model\Image;
 use CeusMedia\RSS\Model\Item;
@@ -36,15 +38,15 @@ use CeusMedia\RSS\Model\Item;
  *	@category		Library
  *	@package		CeusMedia_RSS
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2012-2020 {@link https://ceusmedia.de/ Ceus Media}
+ *	@copyright		2012-2023 {@link https://ceusmedia.de/ Ceus Media}
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/RSS
  */
 class Parser
 {
-	static public function parse( string $xml ): Channel
+	public static function parse( string $xml ): Channel
 	{
-		$xml		= new \XML_Element( $xml );
+		$xml		= new XmlElement( $xml );
 		$channel	= new Channel();
 
 		foreach( $xml->channel->children() as $node ){
@@ -67,7 +69,7 @@ class Parser
 				$channel->setAdmin( $user[0], $user[1] );
 			}
 			if( $node->getName() == 'pubDate' )
-				$channel->setDate( strtotime( $node->getValue() ) );
+				$channel->setDate( strtotime( $node->getValue() ) ?: NULL );
 			if( $node->getName() == 'category' )
 				$channel->setCategory( $node->getValue() );
 			if( $node->getName() == 'generator' )
@@ -92,7 +94,7 @@ class Parser
 		return $channel;
 	}
 
-	static protected function parseItem( \XML_Element $xml ): Item
+	protected static function parseItem( XmlElement $xml ): Item
 	{
 		$item	= new Item();
 		foreach( $xml->children() as $node ){
@@ -107,25 +109,22 @@ class Parser
 					$item->setContent( trim( $node->getValue() ) );
 					break;
 				case 'author':
-					$user	= self::parseUser( $node->getValue() );
+					$user	= self::parseUser( $node );
 					$item->setAuthor( $user[0], $user[1] );
 					break;
 				case 'category':
 					$item->setCategory( $node->getValue() );
 					break;
 				case 'guid':
-					$isPermaLink	= NULL;
-					if( $node->hasAttribute( 'isPermaLink' ) && $node->getAttribute( 'isPermaLink' ) )
-						$isPermaLink	= TRUE;
+					$isPermaLink	= $node->hasAttribute( 'isPermaLink' ) &&
+						'true'	=== $node->getAttribute( 'isPermaLink' );
 					$item->setId( $node->getValue(), $isPermaLink );
 					break;
 				case 'pubDate':
-					$item->setDate( strtotime( $node->getValue() ) );
+					$item->setDate( strtotime( $node->getValue() ) ?: NULL );
 					break;
 				case 'source':
-					$url	= NULL;
-					if( $node->hasAttribute( 'url' ) && $node->getAttribute( 'url' ) )
-						$url	= TRUE;
+					$url	= $node->hasAttribute( 'url' ) ? $node->getAttribute( 'url' ) : NULL;
 					$item->setSource( $node->getValue(), $url );
 					break;
 			}
@@ -133,7 +132,7 @@ class Parser
 		return $item;
 	}
 
-	static protected function parseUser( \XML_Element $xml ): array
+	protected static function parseUser( XmlElement $xml ): array
 	{
 		$parts	= explode( " (", $xml->getValue() );
 		$name	= array_shift( $parts );

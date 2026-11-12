@@ -1,5 +1,5 @@
-<?xml version="1.0"?>
-<rss version="2.0.11">
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
   <channel>
     <title>Test 1</title>
     <link>https://ceusmedia.de/</link>
@@ -9,10 +9,7 @@
     <image>
       <url>https://example.org/image1</url>
       <title>Example Image 1</title>
-      <link/>
-      <description/>
-      <width/>
-      <height/>
+      <link>https://ceusmedia.de/</link>
     </image>
     <item>
       <title>Test 1-1</title>

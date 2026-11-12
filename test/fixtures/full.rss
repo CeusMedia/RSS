@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>Example Channel</title>
+    <link>https://example.org/</link>
+    <description>News &amp; updates from example.org</description>
+    <language>en-us</language>
+    <copyright>Copyright 2024 Example Inc.</copyright>
+    <managingEditor>editor@example.org (Erika Editor)</managingEditor>
+    <webMaster>webmaster@example.org (Willi Webmaster)</webMaster>
+    <pubDate>Mon, 01 Jan 2024 12:00:00 +0000</pubDate>
+    <lastBuildDate>Tue, 02 Jan 2024 08:30:00 +0100</lastBuildDate>
+    <category>Technology</category>
+    <category domain="https://example.org/taxonomy">Web/Feeds</category>
+    <generator>CeusMedia/RSS</generator>
+    <docs>https://www.rssboard.org/rss-specification</docs>
+    <cloud domain="rpc.example.org" port="80" path="/RPC2" registerProcedure="pingMe" protocol="soap"/>
+    <ttl>60</ttl>
+    <image>
+      <url>https://example.org/logo.png</url>
+      <title>Example Logo</title>
+      <link>https://example.org/</link>
+      <width>88</width>
+      <height>31</height>
+      <description>Logo of example.org</description>
+    </image>
+    <rating>(PICS-1.1 "http://www.rsac.org/ratingsv01.html" l by "webmaster@example.org" on "2024.01.01T08:15-0500" r (n 0 s 0 v 0 l 0))</rating>
+    <textInput>
+      <title>Search</title>
+      <description>Search the archive</description>
+      <name>q</name>
+      <link>https://example.org/search</link>
+    </textInput>
+    <skipHours>
+      <hour>0</hour>
+      <hour>1</hour>
+      <hour>23</hour>
+    </skipHours>
+    <skipDays>
+      <day>Saturday</day>
+      <day>Sunday</day>
+    </skipDays>
+    <item>
+      <title>First item</title>
+      <link>https://example.org/news/1</link>
+      <description>&lt;p&gt;Hello &amp; welcome&lt;/p&gt;</description>
+      <author>author@example.org (Anna Author)</author>
+      <category>News</category>
+      <category domain="https://example.org/tags">welcome</category>
+      <comments>https://example.org/news/1#comments</comments>
+      <enclosure url="https://example.org/media/episode1.mp3" length="12345678" type="audio/mpeg"/>
+      <guid isPermaLink="true">https://example.org/news/1</guid>
+      <pubDate>Mon, 01 Jan 2024 10:00:00 +0000</pubDate>
+      <source url="https://other.example.org/rss?a=1&amp;b=2">Other feed</source>
+    </item>
+    <item>
+      <title>Second item</title>
+      <guid isPermaLink="false">urn:uuid:2c5e4f8a-0000-4000-8000-000000000002</guid>
+    </item>
+    <item>
+      <description>Item without title</description>
+    </item>
+  </channel>
+</rss>

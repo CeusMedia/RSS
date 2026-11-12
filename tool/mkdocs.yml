@@ -1,0 +1,164 @@
+site_name: CeusMedia RSS
+site_url: https://ceusmedia.de/docs/rss/
+site_description: Create, read and combine RSS 2.0 and Atom feeds with PHP – with podcast support.
+site_author: Christian Würker
+repo_url: https://github.com/CeusMedia/RSS
+repo_name: CeusMedia/RSS
+edit_uri: ""
+copyright: Copyright &copy; 2012-2026 Christian Würker &middot; GPL-3.0-or-later
+
+docs_dir: ../doc/Manual
+site_dir: ../doc/Site
+use_directory_urls: false
+
+theme:
+  name: material
+  language: en
+  icon:
+    logo: material/rss
+    repo: fontawesome/brands/github
+  favicon: assets/favicon.svg
+  font:
+    text: Fira Sans
+    code: Fira Code
+  palette:
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/theme-light-dark
+        name: "Theme: system – switch to light"
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-sunny
+        name: "Theme: light – switch to dark"
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-night
+        name: "Theme: dark – switch to system"
+  features:
+    - content.code.annotate
+    - content.code.copy
+    - content.tabs.link
+    - navigation.footer
+    - navigation.indexes
+    - navigation.instant
+    - navigation.instant.progress
+    - navigation.path
+    - navigation.sections
+    - navigation.tabs
+    - navigation.top
+    - navigation.tracking
+    - search.highlight
+    - search.share
+    - search.suggest
+    - toc.follow
+
+extra_css:
+  - assets/extra.css
+
+plugins:
+  - search
+  - offline
+
+markdown_extensions:
+  - abbr
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+      extend_pygments_lang:
+        - name: php
+          lang: php
+          options:
+            startinline: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+extra:
+  generator: false
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/CeusMedia/RSS
+    - icon: simple/packagist
+      link: https://packagist.org/packages/ceus-media/rss
+
+nav:
+  - Home: index.md
+  - Guide:
+      - guide/installation.md
+      - guide/quickstart.md
+      - guide/creating.md
+      - guide/podcasts.md
+      - guide/reading.md
+      - guide/url-reader.md
+      - guide/combining.md
+      - guide/extensions.md
+      - guide/errors.md
+      - guide/recipes.md
+      - guide/development.md
+  - API Reference:
+    # api-nav:start
+    - api/index.md
+    - Core:
+      - "AtomParser": api/AtomParser.md
+      - "Combiner": api/Combiner.md
+      - "Dom": api/Dom.md
+      - "FeedParser": api/FeedParser.md
+      - "Filter": api/Filter.md
+      - "Parser": api/Parser.md
+      - "Renderer": api/Renderer.md
+      - "Response": api/Response.md
+      - "UrlReader": api/UrlReader.md
+    - Models:
+      - "Category": api/Model/Category.md
+      - "Channel": api/Model/Channel.md
+      - "Cloud": api/Model/Cloud.md
+      - "Enclosure": api/Model/Enclosure.md
+      - "ExtensionDataTrait": api/Model/ExtensionDataTrait.md
+      - "Guid": api/Model/Guid.md
+      - "Image": api/Model/Image.md
+      - "Item": api/Model/Item.md
+      - "Person": api/Model/Person.md
+      - "Source": api/Model/Source.md
+      - "TextInput": api/Model/TextInput.md
+    - Extensions:
+      - "AbstractExtension": api/Extension/AbstractExtension.md
+      - "Atom\\AtomExtension": api/Extension/Atom/AtomExtension.md
+      - "Atom\\ChannelData": api/Extension/Atom/ChannelData.md
+      - "Atom\\Link": api/Extension/Atom/Link.md
+      - "Content\\ContentExtension": api/Extension/Content/ContentExtension.md
+      - "Content\\ItemData": api/Extension/Content/ItemData.md
+      - "DublinCore\\Data": api/Extension/DublinCore/Data.md
+      - "DublinCore\\DublinCoreExtension": api/Extension/DublinCore/DublinCoreExtension.md
+      - "ExtensionInterface": api/Extension/ExtensionInterface.md
+      - "Extensions": api/Extension/Extensions.md
+      - "ITunes\\Category": api/Extension/ITunes/Category.md
+      - "ITunes\\ChannelData": api/Extension/ITunes/ChannelData.md
+      - "ITunes\\ItemData": api/Extension/ITunes/ItemData.md
+      - "ITunes\\ITunesExtension": api/Extension/ITunes/ITunesExtension.md
+    - Exceptions:
+      - "ParseException": api/Exception/ParseException.md
+      - "ReadException": api/Exception/ReadException.md
+      - "RenderException": api/Exception/RenderException.md
+    # api-nav:end
+  - Changelog: changelog.md

@@ -1,0 +1,22 @@
+{
+	"$schema": "../vendor/infection/infection/resources/schema.json",
+	"source": {
+		"directories": ["../src"]
+	},
+	"phpUnit": {
+		"configDir": "."
+	},
+	"tmpDir": "../.infection.cache",
+	"logs": {
+		"text": "../doc/Test/infection.log",
+		"html": "../doc/Test/Infection/index.html",
+		"summary": "../doc/Test/infection-summary.log"
+	},
+	"mutators": {
+		"@default": true,
+		"ProtectedVisibility": false
+	},
+	"testFrameworkOptions": "--testsuite=units",
+	"minMsi": 95,
+	"minCoveredMsi": 97
+}

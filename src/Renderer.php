@@ -1,8 +1,10 @@
 <?php
+declare( strict_types=1 );
+
 /**
- *	...
+ *	Renderer for RSS 2.0 feeds.
  *
- *	Copyright (c) 2012-2023 Christian Würker / {@link https://ceusmedia.de/ Ceus Media}
+ *	Copyright (c) 2012-2026 Christian Würker / {@link https://ceusmedia.de/ Ceus Media}
  *
  *	This program is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -20,149 +22,259 @@
  *	@category		Library
  *	@package		CeusMedia_RSS
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2012-2023 {@link https://ceusmedia.de/ Ceus Media}
+ *	@copyright		2012-2026 {@link https://ceusmedia.de/ Ceus Media}
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/RSS
  */
 namespace CeusMedia\RSS;
 
+use CeusMedia\RSS\Exception\RenderException;
+use CeusMedia\RSS\Extension\ExtensionInterface;
+use CeusMedia\RSS\Extension\Extensions;
+use CeusMedia\RSS\Model\Category;
 use CeusMedia\RSS\Model\Channel;
-use DateTime;
+use CeusMedia\RSS\Model\Image;
+use CeusMedia\RSS\Model\Item;
+use DateTimeImmutable;
+use DateTimeInterface;
 use DOMDocument;
-use RuntimeException;
+use DOMElement;
+use DOMException;
 
 /**
- *	...
+ *	Renderer for RSS 2.0 feeds.
  *
  *	@category		Library
  *	@package		CeusMedia_RSS
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2012-2023 {@link https://ceusmedia.de/ Ceus Media}
+ *	@copyright		2012-2026 {@link https://ceusmedia.de/ Ceus Media}
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/RSS
  */
 class Renderer
 {
-	public static string $version		= "2.0.11";
+	/**	Value of version attribute of root element */
+	public const string VERSION		= '2.0';
 
-	public static function render( Channel $channel, bool $useTabs = FALSE ): string
+	/**
+	 *	Renders channel model to RSS 2.0 XML string.
+	 *
+	 *	All values are escaped. Characters not allowed in XML 1.0 are removed,
+	 *	invalid UTF-8 sequences are replaced by U+FFFD.
+	 *	Namespaces of extensions are declared on the root element, only if the channel uses them.
+	 *	@param		Channel			$channel		Channel model to render
+	 *	@param		bool			$useTabs		Flag: indent using tabs instead of 2 spaces
+	 *	@param		?Extensions		$extensions		Extensions to render extension data, default: all built-in extensions
+	 *	@return		string
+	 *	@throws		RenderException					if required data is missing
+	 */
+	public static function render( Channel $channel, bool $useTabs = FALSE, ?Extensions $extensions = NULL ): string
 	{
-		$lines	= array();
-		if( NULL !== $channel->getTitle() && !strlen( trim( $channel->getTitle() ) ) )
-			throw new RuntimeException( 'Channel title cannot be empty' );
-		if( NULL !== $channel->getLink() && !strlen( trim( $channel->getLink() ) ) )
-			throw new RuntimeException( 'Channel link cannot be empty' );
-		if( NULL !== $channel->getDescription() && !strlen( trim( $channel->getDescription() ) ) )
-			throw new RuntimeException( 'Channel description cannot be empty' );
-		$lines[]	= self::renderNode( 'title', $channel->getTitle() );
-		$lines[]	= self::renderNode( 'link', $channel->getLink() );
-		$lines[]	= self::renderNode( 'description', $channel->getDescription() );
-
-		if( NULL !== $channel->getLanguage() && strlen( $channel->getLanguage() ) )
-			$lines[]	= self::renderNode( 'language', $channel->getLanguage() );
-		if( NULL !== $channel->getCopyright() && strlen( $channel->getCopyright() ) )
-			$lines[]	= self::renderNode( 'copyright', $channel->getCopyright() );
-
-		if( ( $manager = $channel->getManager() ) ){
-			$manager		= $manager[0].( !empty( $manager[1] ) ? ' ('.$manager[1].')' : '' );
-			$lines[]	= self::renderNode( 'managingEditor', $manager );
+		$used		= ( $extensions ?? Extensions::default() )->getUsedBy( $channel );
+		$document	= new DOMDocument( '1.0', 'UTF-8' );
+		$document->formatOutput	= TRUE;
+		try{
+			$rss	= Dom::append( $document, 'rss', NULL, ['version' => self::VERSION] );
+			foreach( $used as $extension )
+				$rss->setAttributeNS( 'http://www.w3.org/2000/xmlns/', 'xmlns:'.$extension->getPrefix(), $extension->getNamespace() );
+			self::renderChannel( $rss, $channel, $used );
 		}
-		if( ( $admin = $channel->getAdmin() ) ){
-			$admin		= $admin[0].( !empty( $admin[1] ) ? ' ('.$admin[1].')' : '' );
-			$lines[]	= self::renderNode( 'webMaster', $admin );
+		catch( DOMException $e ){
+			throw new RenderException( 'Rendering XML failed: '.$e->getMessage(), 0, $e );
 		}
-		if( NULL !== ( $date = $channel->getDate() ) ){
-			if( is_int( $date ) )
-				$lines[]	= self::renderNode( 'pubDate', date( 'r', $date ) );
-//			else if( $date instanceof DateTime )
-//				$lines[]	= self::renderNode( 'pubDate', $date->format( 'r' ) );
-			else
-				$lines[]	= self::renderNode( 'pubDate', $date );
-		}
-		$lines[]	= self::renderNode( 'lastBuildDate', date( 'r', time() ) );
-
-		if( NULL !== $channel->getCategory() && strlen( $channel->getCategory() ) )
-			$lines[]	= self::renderNode( 'category', $channel->getCategory() );
-		if( NULL !== $channel->getGenerator() && strlen( $channel->getGenerator() ) )
-			$lines[]	= self::renderNode( 'generator', $channel->getGenerator() );
-		$lines[]	= self::renderNode( 'docs', "https://www.rssboard.org/rss-specification" );
-
-		if( $channel->getCloud() )
-			$lines[]	= self::renderNode( 'cloud', NULL, $channel->getCloud() );
-
-		if( ( $image = $channel->getImage() ) ){
-			$url		= self::renderNode( 'url', $image->getUrl() );
-			$title		= self::renderNode( 'title', $image->getTitle() );
-			$link		= self::renderNode( 'link', $image->getLink() );
-			$desc		= self::renderNode( 'description', $image->getDescription() ?: '' );
-			$width		= self::renderNode( 'width', $image->getWidth() ?: '' );
-			$height		= self::renderNode( 'height', $image->getHeight() ?: '' );
-			$content	= $url.$title.$link.$desc.$width.$height;
-			$lines[]	= self::renderNode( 'image', $content, array(), FALSE );
-		}
-		foreach( $channel->getItems() as $item )
-			$lines[]	= self::renderItem( $item );
-		$xml	= '<rss version="'.self::$version.'"><channel>'.join( $lines ).'</channel></rss>';
-		return self::formatXml( $xml, $useTabs );
+		$xml	= $document->saveXML();
+		if( FALSE === $xml )
+			throw new RenderException( 'Rendering XML failed' );
+		return $useTabs ? self::indentWithTabs( $xml ) : $xml;
 	}
 
-	protected static function formatXml( string $xml, bool $useTabs	= FALSE ): string
+	/**
+	 *	Appends category elements with optional domain.
+	 *	@param		DOMElement			$parent		Parent DOM element
+	 *	@param		list<Category>		$categories		Categories
+	 *	@throws		DOMException
+	 */
+	protected static function appendCategories( DOMElement $parent, array $categories ): void
 	{
-		$document	= new DOMDocument();
-		$document->preserveWhiteSpace	= FALSE;
-		$document->loadXml( $xml );
-		$document->formatOutput = TRUE;
-		$xml	= $document->saveXml();
-		if( !$useTabs )
-			return $xml;
+		foreach( $categories as $category )
+			Dom::append( $parent, 'category', $category->name, ['domain' => $category->domain] );
+	}
+
+	/**
+	 *	Appends element only if value is not empty.
+	 *	@param		DOMElement		$parent		Parent DOM element
+	 *	@param		string		$name		Name
+	 *	@param		?string		$value		Value to parse
+	 *	@throws		DOMException
+	 */
+	protected static function appendOptional( DOMElement $parent, string $name, ?string $value ): void
+	{
+		if( Dom::isFilled( $value ) )
+			Dom::append( $parent, $name, $value );
+	}
+
+	/**
+	 *	Formats date in RFC 822 format, keeping its timezone.
+	 *	@param		DateTimeInterface		$date		Date
+	 *	@return		string
+	 */
+	protected static function formatDate( DateTimeInterface $date ): string
+	{
+		return $date->format( DATE_RSS );
+	}
+
+	/**
+	 *	Replaces indentation by 2 spaces with tabs.
+	 *	@param		string		$xml		XML string
+	 *	@return		string
+	 */
+	protected static function indentWithTabs( string $xml ): string
+	{
 		$lines	= explode( "\n", $xml );
-		foreach( $lines as $nr => $line )
-			while( preg_match( "/^\t*  /", $lines[$nr] ) )
-				$lines[$nr]	= preg_replace( "/^(\t*)  /", "\\1\t", $lines[$nr] );
+		foreach( $lines as $nr => $line ){
+			$lines[$nr]	= preg_replace_callback(
+				'/^(  )+/',
+				static fn( array $matches ): string => str_repeat( "\t", intdiv( strlen( $matches[0] ), 2 ) ),
+				$line
+			) ?? $line;
+		}
 		return implode( "\n", $lines );
 	}
 
-	protected static function renderNode( string $name, $value, array $attributes = [], bool $encode = TRUE ): string
+	/**
+	 *	Renders <channel> element with all channel elements, extension elements and items.
+	 *	@param		DOMElement					$rss
+	 *	@param		Channel						$channel		Channel model
+	 *	@param		list<ExtensionInterface>	$extensions		Extensions used by channel
+	 *	@throws		DOMException
+	 *	@throws		RenderException
+	 */
+	protected static function renderChannel( DOMElement $rss, Channel $channel, array $extensions ): void
 	{
-		$list	= [];
-		foreach( $attributes as $key => $attrValue )
-			if( $attrValue !== NULL )
-				$list[]	= ' '.$key.'="'.$attrValue.'"';
-		if( $encode )
-			$value	= htmlspecialchars( (string) $value );
-		return '<'.$name.join( $list ).'>'.$value.'</'.$name.'>';
+		$node		= Dom::append( $rss, 'channel' );
+		$required	= [
+			'title'			=> $channel->getTitle(),
+			'link'			=> $channel->getLink(),
+			'description'	=> $channel->getDescription(),
+		];
+		foreach( $required as $name => $value ){
+			if( !Dom::isFilled( $value ) )
+				throw new RenderException( 'Channel '.$name.' cannot be empty' );
+			Dom::append( $node, $name, $value );
+		}
+		self::appendOptional( $node, 'language', $channel->getLanguage() );
+		self::appendOptional( $node, 'copyright', $channel->getCopyright() );
+		self::appendOptional( $node, 'managingEditor', $channel->getManagingEditor()?->__toString() );
+		self::appendOptional( $node, 'webMaster', $channel->getWebMaster()?->__toString() );
+		if( NULL !== $channel->getPubDate() )
+			Dom::append( $node, 'pubDate', self::formatDate( $channel->getPubDate() ) );
+		$lastBuildDate	= $channel->getLastBuildDate() ?? new DateTimeImmutable();
+		Dom::append( $node, 'lastBuildDate', self::formatDate( $lastBuildDate ) );
+		self::appendCategories( $node, $channel->getCategories() );
+		self::appendOptional( $node, 'generator', $channel->getGenerator() );
+		self::appendOptional( $node, 'docs', $channel->getDocs() );
+
+		$cloud	= $channel->getCloud();
+		if( NULL !== $cloud )
+			Dom::append( $node, 'cloud', NULL, [
+				'domain'			=> $cloud->domain,
+				'port'				=> (string) $cloud->port,
+				'path'				=> $cloud->path,
+				'registerProcedure'	=> $cloud->registerProcedure,
+				'protocol'			=> $cloud->protocol,
+			] );
+		if( NULL !== $channel->getTtl() )
+			Dom::append( $node, 'ttl', (string) $channel->getTtl() );
+		$image	= $channel->getImage();
+		if( NULL !== $image )
+			self::renderImage( $node, $image, $channel );
+		self::appendOptional( $node, 'rating', $channel->getRating() );
+
+		$textInput	= $channel->getTextInput();
+		if( NULL !== $textInput ){
+			$textInputNode	= Dom::append( $node, 'textInput' );
+			Dom::append( $textInputNode, 'title', $textInput->title );
+			Dom::append( $textInputNode, 'description', $textInput->description );
+			Dom::append( $textInputNode, 'name', $textInput->name );
+			Dom::append( $textInputNode, 'link', $textInput->link );
+		}
+		if( [] !== $channel->getSkipHours() ){
+			$skipHoursNode	= Dom::append( $node, 'skipHours' );
+			foreach( $channel->getSkipHours() as $hour )
+				Dom::append( $skipHoursNode, 'hour', (string) $hour );
+		}
+		if( [] !== $channel->getSkipDays() ){
+			$skipDaysNode	= Dom::append( $node, 'skipDays' );
+			foreach( $channel->getSkipDays() as $day )
+				Dom::append( $skipDaysNode, 'day', $day );
+		}
+		foreach( $extensions as $extension )
+			$extension->renderChannel( $channel, $node );
+		foreach( $channel->getItems() as $nr => $item )
+			self::renderItem( $node, $item, $nr, $extensions );
 	}
 
-	protected static function renderItem( Model\Item $item ): string
+	/**
+	 *	Renders channel image.
+	 *	Title and link are required by specification and fall back to channel title and link.
+	 *	@param		DOMElement		$parent		Parent DOM element
+	 *	@param		Image		$image		Image
+	 *	@param		Channel		$channel		Channel model
+	 *	@throws		DOMException
+	 */
+	protected static function renderImage( DOMElement $parent, Image $image, Channel $channel ): void
 	{
-		$lines	= array();
-		if( NULL === $item->getTitle() || !strlen( $item->getTitle() ) )
-			throw new RuntimeException( 'Item title cannot be empty' );
-		$lines[]	= self::renderNode( 'title', $item->getTitle() );
-		if( NULL !== $item->getLink() && strlen( $item->getLink() ) )
-			$lines[]	= self::renderNode( 'link', $item->getLink() );
-		if( NULL !== $item->getContent() && strlen( $item->getContent() ) )
-			$lines[]	= self::renderNode( 'description', $item->getContent() );
-		if( ( $author = $item->getAuthor() ) ){
-			$author		= $author[0].( !empty( $author[1] ) ? ' ('.$author[1].')' : '' );
-			$lines[]	= self::renderNode( 'author', $author );
-		}
-		if( NULL !== $item->getCategory() && strlen( $item->getCategory() ) )
-			$lines[]	= self::renderNode( 'category', $item->getCategory() );
-		if( NULL !== ( $date = $item->getDate() ) ){
-			if( is_int( $date ) )
-				$lines[]	= self::renderNode( 'pubDate', date( 'r', $date ) );
-//			else if( $date instanceof DateTime )
-//				$lines[]	= self::renderNode( 'pubDate', $date->format( 'r' ) );
-			else
-				$lines[]	= self::renderNode( 'pubDate', $date );
-		}
-		if( ( $guid = $item->getId() ) ){
-			$attributes	= array( 'isPermaLink' => $guid[1] ? 'true' : NULL );
-			$lines[]	= self::renderNode( 'guid', $guid[0], $attributes );
-		}
-		if( ( $source = $item->getSource() ) )
-			$lines[]	= self::renderNode( 'source', $source[0], ['url' => $source[1]] );
-		return self::renderNode( 'item', join( $lines ), [], FALSE );
+		$title	= Dom::isFilled( $image->getTitle() ) ? $image->getTitle() : $channel->getTitle();
+		$link	= Dom::isFilled( $image->getLink() ) ? $image->getLink() : $channel->getLink();
+		$node	= Dom::append( $parent, 'image' );
+		Dom::append( $node, 'url', $image->getUrl() );
+		Dom::append( $node, 'title', $title );
+		Dom::append( $node, 'link', $link );
+		if( NULL !== $image->getWidth() )
+			Dom::append( $node, 'width', (string) $image->getWidth() );
+		if( NULL !== $image->getHeight() )
+			Dom::append( $node, 'height', (string) $image->getHeight() );
+		self::appendOptional( $node, 'description', $image->getDescription() );
+	}
+
+	/**
+	 *	Renders <item> element with all item elements and extension elements.
+	 *	@param		DOMElement					$parent		Parent DOM element
+	 *	@param		Item						$item		Item model
+	 *	@param		int							$nr				Index of item, for error messages
+	 *	@param		list<ExtensionInterface>	$extensions		Extensions used by channel
+	 *	@throws		DOMException
+	 *	@throws		RenderException			if item has neither title nor description
+	 */
+	protected static function renderItem( DOMElement $parent, Item $item, int $nr, array $extensions ): void
+	{
+		if( !Dom::isFilled( $item->getTitle() ) && !Dom::isFilled( $item->getDescription() ) )
+			throw new RenderException( 'Item #'.( $nr + 1 ).' must have a title or a description' );
+		$node	= Dom::append( $parent, 'item' );
+		self::appendOptional( $node, 'title', $item->getTitle() );
+		self::appendOptional( $node, 'link', $item->getLink() );
+		self::appendOptional( $node, 'description', $item->getDescription() );
+		self::appendOptional( $node, 'author', $item->getAuthor()?->__toString() );
+		self::appendCategories( $node, $item->getCategories() );
+		self::appendOptional( $node, 'comments', $item->getComments() );
+		$enclosure	= $item->getEnclosure();
+		if( NULL !== $enclosure )
+			Dom::append( $node, 'enclosure', NULL, [
+				'url'		=> $enclosure->url,
+				'length'	=> (string) $enclosure->length,
+				'type'		=> $enclosure->type,
+			] );
+		$guid	= $item->getGuid();
+		if( NULL !== $guid )
+			Dom::append( $node, 'guid', $guid->value, [
+				'isPermaLink'	=> $guid->isPermaLink ? 'true' : 'false',
+			] );
+		if( NULL !== $item->getPubDate() )
+			Dom::append( $node, 'pubDate', self::formatDate( $item->getPubDate() ) );
+		$source	= $item->getSource();
+		if( NULL !== $source )
+			Dom::append( $node, 'source', $source->title, ['url' => $source->url] );
+		foreach( $extensions as $extension )
+			$extension->renderItem( $item, $node );
 	}
 }

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:media="http://search.yahoo.com/mrss/">
+  <channel>
+    <title>Feed with extensions</title>
+    <atom:link href="https://example.org/feed.rss" rel="self" type="application/rss+xml"/>
+    <link>https://example.org/</link>
+    <description>Uses common RSS extensions</description>
+    <item>
+      <title>Real title</title>
+      <media:title>Media title must be ignored</media:title>
+      <dc:creator>Dora Creator</dc:creator>
+      <description>Short</description>
+      <content:encoded><![CDATA[<p>Long content</p>]]></content:encoded>
+      <link>https://example.org/1</link>
+    </item>
+  </channel>
+</rss>

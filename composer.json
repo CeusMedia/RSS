@@ -1,8 +1,16 @@
 {
   "name": "ceus-media/rss",
-  "license": [
-    "GPL-3.0+"
+  "description": "PHP library to create, read and combine RSS 2.0 and Atom feeds, with podcast (iTunes) support.",
+  "keywords": [
+    "rss",
+    "atom",
+    "feed",
+    "podcast",
+    "itunes",
+    "parser",
+    "aggregator"
   ],
+  "license": "GPL-3.0-or-later",
   "authors": [
     {
       "name": "Christian Würker",
@@ -16,26 +24,51 @@
     "jabber": "cwuerker@ceusmedia.de"
   },
   "require": {
-    "php": "^8.1",
-    "ceus-media/common": "^1.0 | 1.0.x-dev",
-    "ext-dom": "*"
+    "php": "^8.3",
+    "ceus-media/common": "^1.1 | 1.1.x-dev",
+    "ext-dom": "*",
+    "ext-libxml": "*",
+    "ext-mbstring": "*"
   },
   "require-dev": {
-    "phpunit/phpunit": "^9.5 | ^10",
-    "ceus-media/doc-creator": "^0.9",
-    "phpstan/phpstan": "^1",
-    "phpstan/phpstan-strict-rules": "^1",
-    "php-parallel-lint/php-parallel-lint": "^1.3",
-    "rector/rector": "*"
+    "phpunit/phpunit": "^10",
+    "ceus-media/doc-creator": "^1.1 | 1.1.x-dev",
+    "phpstan/phpstan": "^2",
+    "phpstan/phpstan-strict-rules": "^2",
+    "php-parallel-lint/php-parallel-lint": "^1.4",
+    "rector/rector": "^2",
+    "infection/infection": "^0.35",
+    "friendsofphp/php-cs-fixer": "^3.95"
+  },
+  "suggest": {
+    "ext-curl": "for reading feeds from URLs (UrlReader, Combiner::addUrl, Combiner::addUrls)"
   },
   "autoload": {
     "psr-4": {
-      "CeusMedia\\RSS\\": ["src/"],
-      "CeusMedia\\RSSTest\\": ["test/"]
+      "CeusMedia\\RSS\\": [
+        "src/"
+      ],
+      "CeusMedia\\RSSTest\\": [
+        "test/"
+      ]
+    }
+  },
+  "config": {
+    "allow-plugins": {
+      "infection/extension-installer": false
     }
   },
   "scripts": {
-    "dev:install": "composer install --dev --quiet",
+    "dev:install": "composer install --quiet",
+    "dev:update": "composer update",
+    "dev:cs": [
+      "@dev:install",
+      "vendor/bin/php-cs-fixer fix --config=tool/php-cs-fixer.php --dry-run --diff"
+    ],
+    "dev:cs-fix": [
+      "@dev:install",
+      "vendor/bin/php-cs-fixer fix --config=tool/php-cs-fixer.php"
+    ],
     "dev:rector": [
       "@dev:install",
       "vendor/bin/rector process --config=tool/rector.php --dry-run"
@@ -58,20 +91,54 @@
     ],
     "dev:test-syntax": [
       "@dev:install",
-      "vendor/bin/parallel-lint . -j 10 --colors --exclude vendor"
+      "vendor/bin/parallel-lint src test demo -j 10 --colors"
     ],
     "dev:test-units": [
       "@dev:install",
-      "php vendor/bin/phpunit --configuration tool/phpunit9.xml --testsuite units"
+      "XDEBUG_MODE=off vendor/bin/phpunit --configuration tool/phpunit.xml --testsuite units --no-coverage"
     ],
-    "dev:update": "composer update --dev",
-    "incomplete:dev:create-docs": [
+    "dev:test-coverage": [
+      "@dev:install",
+      "XDEBUG_MODE=coverage vendor/bin/phpunit --configuration tool/phpunit.xml --testsuite units --coverage-text --colors=always"
+    ],
+    "dev:infection": [
+      "@dev:install",
+      "XDEBUG_MODE=coverage vendor/bin/infection --configuration=tool/infection.json5 --threads=max"
+    ],
+    "dev:test-all": [
+      "@dev:test-syntax",
+      "@dev:cs",
+      "@dev:stan",
+      "@dev:test-units"
+    ],
+    "dev:demo": [
+      "Composer\\Config::disableProcessTimeout",
+      "@php -S localhost:8080 -t demo"
+    ],
+    "dev:docs": [
+      "@dev:docs-api",
+      "tool/docs/docs.sh build"
+    ],
+    "dev:docs-api": [
+      "@dev:install",
+      "php tool/docs/generate-api.php"
+    ],
+    "dev:docs-install": "tool/docs/docs.sh install",
+    "dev:docs-serve": [
+      "Composer\\Config::disableProcessTimeout",
+      "@dev:docs-api",
+      "tool/docs/docs.sh serve"
+    ],
+    "dev:create-docs": [
       "@dev:install",
       "php vendor/ceus-media/doc-creator/doc-creator.php --config-file=tool/doc.xml"
     ]
   },
   "scripts-descriptions": {
     "dev:install": "Installs project dependencies for Development stage quietly",
+    "dev:update": "Updates project dependencies for Development stage",
+    "dev:cs": "Check coding style with PHP-CS-Fixer",
+    "dev:cs-fix": "Fix coding style with PHP-CS-Fixer",
     "dev:rector": "Shows suggestions of configured Rector rules",
     "dev:rector-fix": "Apply currently configured Rector rules to codebase",
     "dev:stan": "Validate codebase with PHPStan",
@@ -79,6 +146,14 @@
     "dev:stan-save": "Store current results in ignore list",
     "dev:test-syntax": "Validate code base syntax using PHP linter",
     "dev:test-units": "Run unit tests",
-    "dev:update": "Updates project dependencies for Development stage quietly"
+    "dev:test-coverage": "Run unit tests with code coverage: summary on console, HTML report in doc/Test/Coverage, Clover XML in doc/Test (needs Xdebug or PCOV)",
+    "dev:infection": "Run mutation tests with Infection (needs Xdebug or PCOV), report in doc/Test/Infection",
+    "dev:test-all": "Run syntax check, coding style check, PHPStan and unit tests",
+    "dev:demo": "Start web server for demos on http://localhost:8080/",
+    "dev:docs": "Generate API reference and build documentation (MkDocs) into doc/Site/",
+    "dev:docs-api": "Generate API reference pages into doc/Manual/api/",
+    "dev:docs-install": "Install MkDocs Material into Python venv tool/docs/.venv (optional, else Docker is used)",
+    "dev:docs-serve": "Generate API reference and serve documentation on http://localhost:8000",
+    "dev:create-docs": "Create classic API documentation by DocCreator in doc/API"
   }
 }

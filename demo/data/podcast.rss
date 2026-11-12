@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>Example Podcast</title>
+    <link>https://podcast.example.org/</link>
+    <description>Talks about feeds, formats &amp; friends</description>
+    <language>en-us</language>
+    <category>Technology</category>
+    <ttl>1440</ttl>
+    <item>
+      <title>Episode 2: Escaping special characters</title>
+      <link>https://podcast.example.org/episodes/2</link>
+      <description>Why angle brackets and ampersands need special care.</description>
+      <author>host@podcast.example.org (Hanna Host)</author>
+      <category>Episodes</category>
+      <enclosure url="https://podcast.example.org/media/episode-2.mp3" length="24986239" type="audio/mpeg"/>
+      <guid isPermaLink="false">podcast-episode-2</guid>
+      <pubDate>Tue, 05 Mar 2024 08:00:00 +0100</pubDate>
+    </item>
+    <item>
+      <title>Episode 1: What is RSS?</title>
+      <link>https://podcast.example.org/episodes/1</link>
+      <enclosure url="https://podcast.example.org/media/episode-1.mp3" length="19843021" type="audio/mpeg"/>
+      <guid isPermaLink="false">podcast-episode-1</guid>
+      <pubDate>Fri, 01 Mar 2024 14:15:00 +0100</pubDate>
+    </item>
+  </channel>
+</rss>

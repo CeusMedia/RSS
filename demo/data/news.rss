@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>Example News</title>
+    <link>https://news.example.org/</link>
+    <description>Latest news from example.org</description>
+    <language>en-us</language>
+    <managingEditor>editor@news.example.org (Erika Editor)</managingEditor>
+    <lastBuildDate>Wed, 06 Mar 2024 18:00:00 +0000</lastBuildDate>
+    <image>
+      <url>https://news.example.org/logo.png</url>
+      <title>Example News</title>
+      <link>https://news.example.org/</link>
+      <width>88</width>
+      <height>31</height>
+    </image>
+    <item>
+      <title>Version 2.0 released</title>
+      <link>https://news.example.org/2024/03/release-2-0</link>
+      <description><![CDATA[<p>The new major version is <strong>available now</strong>.</p>]]></description>
+      <author>editor@news.example.org (Erika Editor)</author>
+      <category>Releases</category>
+      <pubDate>Wed, 06 Mar 2024 17:00:00 +0000</pubDate>
+      <guid>https://news.example.org/2024/03/release-2-0</guid>
+    </item>
+    <item>
+      <title>Maintenance window on Friday</title>
+      <link>https://news.example.org/2024/03/maintenance</link>
+      <description>Services will be unavailable between 22:00 and 23:00 UTC.</description>
+      <category>Operations</category>
+      <pubDate>Mon, 04 Mar 2024 09:30:00 +0000</pubDate>
+      <guid isPermaLink="false">news-2024-03-maintenance</guid>
+    </item>
+    <item>
+      <title>Welcome to our new website</title>
+      <link>https://news.example.org/2024/02/welcome</link>
+      <pubDate>Thu, 15 Feb 2024 12:00:00 +0000</pubDate>
+      <guid>https://news.example.org/2024/02/welcome</guid>
+    </item>
+  </channel>
+</rss>
